@@ -1,7 +1,9 @@
 from django.urls import path
-from . import views
+from .views import SignupView, LoginView, PasswordResetRequestView, PasswordResetConfirmView
 
 urlpatterns = [
-    path('api/trainer_signup/', views.trainer_signup, name='trainer_signup'),
-    path('api/trainer_login/', views.trainer_login, name='trainer_login'),
+    path('signup/', SignupView.as_view(), name='trainer_signup'),
+    path('login/', LoginView.as_view(), name='trainer_login'),
+    path('password-reset/', PasswordResetRequestView.as_view(), name='trainer_password_reset'),
+    path('password-reset-confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='trainer_password_reset_confirm'),
 ]
