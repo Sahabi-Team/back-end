@@ -9,7 +9,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
-from django.contrib.auth import get_user_model
+from .models import Client
 from django.conf import settings
 from rest_framework.response import Response
 from rest_framework import status
@@ -17,7 +17,7 @@ from rest_framework.views import APIView
 from .serializers import PasswordResetRequestSerializer, PasswordResetConfirmSerializer
 
 
-User = get_user_model()
+User = Client
 
 class SignupView(APIView):
     def post(self, request):
@@ -43,7 +43,6 @@ class LoginView(APIView):
                     "access": str(refresh.access_token),
                 })
             else:
-                print(f"{password}")
                 return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
