@@ -22,7 +22,6 @@ class User(AbstractUser):
 class Trainer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='trainer_profile')
     expertise = models.CharField(max_length=100)
-    certifications = models.TextField(blank=True)
     experience_years = models.IntegerField(default=0)
 
     def __str__(self):
@@ -31,7 +30,8 @@ class Trainer(models.Model):
 class Trainee(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='trainee_profile')
     age = models.IntegerField()
-    enrolled_courses = models.TextField(blank=True)
-
+    weight=models.IntegerField()
+    height=models.IntegerField()
+    
     def __str__(self):
         return f"Trainee: {self.user.username}"

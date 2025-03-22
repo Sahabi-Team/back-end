@@ -27,4 +27,4 @@ class JWTAuthentication(BaseAuthentication):
         if not user:
             raise AuthenticationFailed('User not found')
 
-        return (user, None)  # `user` is now taken from the DB, not the JWT payload
+        return (user, None) 
