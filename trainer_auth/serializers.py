@@ -1,72 +1,68 @@
 from rest_framework import serializers
-from django.contrib.auth import get_user_model
-from rest_framework.validators import UniqueValidator
-from django.contrib.auth.password_validation import validate_password
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.utils.encoding import smart_str, DjangoUnicodeDecodeError
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.core.mail import send_mail
+from rest_framework.exceptions import ValidationError
+from .models import Trainer
+from authentication.models import User
 
-User = get_user_model()
-
-class TrainerSignupSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(
-        required=True,
-        validators=[UniqueValidator(queryset=User.objects.all())]
-    )
-    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
-    password2 = serializers.CharField(write_only=True, required=True)
+class TrainerSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
 
     class Meta:
-        model = User
-        fields = ('email', 'username', 'password', 'password2')
+        model = Trainer
+        fields = ["user", "expertise", "experience_years"]
 
-    def validate(self, attrs):
-        if attrs['password'] != attrs['password2']:
-            raise serializers.ValidationError({"password": "Passwords do not match."})
-        return attrs
+    def get_user(self, obj):
+        """Fetch related user details"""
+        return {
+            "email": obj.user.email,
+            "username": obj.user.username,
+            "phone_number": obj.user.phone_number,
+        }
+    
 
-    def create(self, validated_data):
-        validated_data.pop('password2')
-        user = User.objects.create_user(**validated_data)
-        return user
 
-class TrainerLoginSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-    password = serializers.CharField(write_only=True)
+class UpdateTrainerSerializer(serializers.ModelSerializer):
+    # User fields
+    email = serializers.EmailField(required=False)
+    username = serializers.CharField(required=False)
+    phone_number = serializers.CharField(required=False, allow_blank=True)
 
-class PasswordResetRequestSerializer(serializers.Serializer):
-    email = serializers.EmailField()
+    user = serializers.SerializerMethodField()  # Include full user details in the response
 
-    def validate(self, attrs):
-        email = attrs.get('email')
-        if not User.objects.filter(email=email).exists():
-            raise serializers.ValidationError("User with this email does not exist.")
-        return attrs
+    class Meta:
+        model = Trainer
+        fields = ["user", "email", "username", "phone_number", "expertise", "experience_years"]
 
-class PasswordResetConfirmSerializer(serializers.Serializer):
-    uidb64 = serializers.CharField()
-    token = serializers.CharField()
-    new_password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
-    confirm_password = serializers.CharField(write_only=True, required=True)
+    def get_user(self, obj):
+        """Return the associated user's details in the response"""
+        return {
+            "email": obj.user.email,
+            "username": obj.user.username,
+            "phone_number": obj.user.phone_number,
+        }
 
-    def validate(self, attrs):
-        try:
-            uid = smart_str(urlsafe_base64_decode(attrs.get('uidb64')))
-            user = User.objects.get(id=uid)
-        except (User.DoesNotExist, DjangoUnicodeDecodeError):
-            raise serializers.ValidationError("Invalid token or user ID.")
+    def validate_email(self, value):
+        """Ensure the email is unique"""
+        if User.objects.filter(email=value).exclude(id=self.instance.user.id).exists():
+            raise serializers.ValidationError("This email is already in use.")
+        return value
 
-        if not PasswordResetTokenGenerator().check_token(user, attrs.get('token')):
-            raise serializers.ValidationError("Invalid or expired token.")
+    def validate_username(self, value):
+        """Ensure the username is unique"""
+        if User.objects.filter(username=value).exclude(id=self.instance.user.id).exists():
+            raise serializers.ValidationError("This username is already taken.")
+        return value
 
-        if attrs.get('new_password') != attrs.get('confirm_password'):
-            raise serializers.ValidationError("Passwords do not match.")
+    def update(self, instance, validated_data):
+        """Update both the Trainer and User models."""
+        user = instance.user  # Get the related User object
 
-        return attrs
+        # Extract user-related fields from validated_data
+        user_fields = ["email", "username", "phone_number"]
+        for field in user_fields:
+            if field in validated_data:
+                setattr(user, field, validated_data.pop(field))  # Update user fields
 
-    def save(self):
-        uid = smart_str(urlsafe_base64_decode(self.validated_data['uidb64']))
-        user = User.objects.get(id=uid)
-        user.set_password(self.validated_data['new_password'])
-        user.save()
+        user.save()  # Save the updated User instance
+
+        # Update remaining Trainer fields (expertise, experience_years)
+        return super().update(instance, validated_data)

@@ -4,7 +4,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.password_validation import validate_password
 from rest_framework.exceptions import ValidationError
 from client_auth.models import Trainee
-# from trainer.models import Trainer
+from trainer_auth.models import Trainer
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -26,8 +26,8 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         if role == "trainee":
             Trainee.objects.create(user=user)
-        # elif role == "trainer":
-        #     Trainer.objects.create(user=user)
+        elif role == "trainer":
+            Trainer.objects.create(user=user)
 
         return user
 
