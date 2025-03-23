@@ -2,6 +2,11 @@ from rest_framework import serializers
 from .models import User
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.password_validation import validate_password
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.core.mail import send_mail
+from django.urls import reverse
+from .utils import password_reset_token
 from rest_framework.exceptions import ValidationError
 from client_auth.models import Trainee
 from trainer_auth.models import Trainer
@@ -55,6 +60,52 @@ class ChangePasswordSerializer(serializers.Serializer):
             raise ValidationError({"new_password": list(e.messages)})
         
         return data
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    def validate_email(self, value):
+        """Check if email exists in the database"""
+        if not User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("No account found with this email.")
+        return value
+
+    def save(self):
+        """Generate token and send reset link via email"""
+        email = self.validated_data["email"]
+        user = User.objects.get(email=email)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = password_reset_token.make_token(user)
+
+        # Generate Password Reset Link
+        reset_link = f"http://localhost:8000/reset-password/{uid}/{token}/"
+
+        # Send Email
+        send_mail(
+            subject="Password Reset Request",
+            message=f"Click the link below to reset your password:\n{reset_link}",
+            from_email="mohammadhosseinpanbechi8908@gmail.com",
+            recipient_list=[email],
+            fail_silently=False,
+        )
+
+class PasswordResetSerializer(serializers.Serializer):
+    new_password = serializers.CharField(write_only=True)
+
+    def save(self, uid, token):
+        """Reset password if the token is valid"""
+        try:
+            user_id = urlsafe_base64_decode(uid).decode()
+            user = User.objects.get(pk=user_id)
+        except (User.DoesNotExist, ValueError, TypeError):
+            raise ValidationError("Invalid token or user.")
+
+        if not password_reset_token.check_token(user, token):
+            raise ValidationError("Invalid or expired token.")
+
+        user.set_password(self.validated_data["new_password"])
+        user.save()
+
 
 
 # class PasswordResetRequestSerializer(serializers.Serializer):
