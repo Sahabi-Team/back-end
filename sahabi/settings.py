@@ -37,12 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'authentication',
+    'trainer_auth',
     'rest_framework',
     'rest_framework_simplejwt',
-    'sahabiApp',
+    'client_auth',
 ]
 
-AUTH_USER_MODEL = 'sahabiApp.User'
+AUTH_USER_MODEL = 'authentication.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
