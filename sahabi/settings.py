@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'authentication',
     'trainer_auth',
+    'tests',
     'rest_framework',
     'rest_framework_simplejwt',
     'client_auth',
@@ -50,7 +51,11 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
 }
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
