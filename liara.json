@@ -1,5 +1,6 @@
 {
   "app": "anzhectortabriz",
+  "platfom":"django",
   "port": 80,
   "build": {
     "location": "iran"
