@@ -1,0 +1,8 @@
+{
+  "app": "anzhectortabriz",
+  "port": 80,
+  "build": {
+    "location": "iran"
+  },    
+  "disks": []
+}
