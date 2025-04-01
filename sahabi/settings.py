@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'client_auth',
+    'workout',
 ]
 
 AUTH_USER_MODEL = 'authentication.User'
