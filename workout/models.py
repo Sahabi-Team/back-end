@@ -2,22 +2,22 @@ from django.db import models
 from authentication.models import User
 from trainer_auth.models import Trainer
 from client_auth.models import Trainee
-
-class Exercise(models.Model):
-    DIFFICULTY_LEVELS = [
-        ('Beginner', 'Beginner'),
-        ('Intermediate', 'Intermediate'),
-        ('Advanced', 'Advanced'),
-    ]
+from exercise.models import Exercise
+# class Exercise(models.Model):
+#     DIFFICULTY_LEVELS = [
+#         ('Beginner', 'Beginner'),
+#         ('Intermediate', 'Intermediate'),
+#         ('Advanced', 'Advanced'),
+#     ]
     
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True, null=True)
-    muscle_group = models.CharField(max_length=50)  
-    equipment = models.CharField(max_length=50, blank=True, null=True)  
-    difficulty = models.CharField(max_length=20, choices=DIFFICULTY_LEVELS, default='Beginner')
+#     name = models.CharField(max_length=100)
+#     description = models.TextField(blank=True, null=True)
+#     muscle_group = models.CharField(max_length=50)  
+#     equipment = models.CharField(max_length=50, blank=True, null=True)  
+#     difficulty = models.CharField(max_length=20, choices=DIFFICULTY_LEVELS, default='Beginner')
 
-    def __str__(self):
-        return self.name
+#     def __str__(self):
+#         return self.name
 
 
 class WorkoutPlan(models.Model):
