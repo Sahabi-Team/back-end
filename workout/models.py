@@ -24,7 +24,8 @@ class WorkoutPlan(models.Model):
     trainer = models.ForeignKey(Trainer, on_delete=models.CASCADE, related_name="workout_plans")
     trainee = models.ForeignKey(Trainee, on_delete=models.CASCADE, related_name="workout_plans")
     created_at = models.DateTimeField(auto_now_add=True)
-    
+    is_active = models.BooleanField(default=True)
+     
     def __str__(self):
         return f"Plan by {self.trainer.user.username} for {self.trainee.user.username}"
 
