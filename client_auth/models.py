@@ -1,5 +1,5 @@
-from authentication.models import User
 from django.db import models
+from authentication.models import User  # Import the User model
 
 class Trainee(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="trainee_profile")
