@@ -9,9 +9,17 @@ class ExerciseTag(models.Model):
 
 class Exercise(models.Model):
     """Exercise model containing images, description, and tags"""
+    DIFFICULTY_LEVELS = [
+        ('Beginner', 'Beginner'),
+        ('Intermediate', 'Intermediate'),
+        ('Advanced', 'Advanced'),
+    ]
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField()
     tags = models.ManyToManyField(ExerciseTag, related_name="exercises")
+    muscle_group = models.CharField(max_length=50)  
+    equipment = models.CharField(max_length=50, blank=True, null=True)  
+    difficulty = models.CharField(max_length=20, choices=DIFFICULTY_LEVELS, default='Beginner')
 
     def __str__(self):
         return self.name

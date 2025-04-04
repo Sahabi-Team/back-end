@@ -14,10 +14,9 @@ class ExerciseTagSerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
 
 class ExerciseSerializer(serializers.ModelSerializer):
-    """Serializer for Exercise with images & tags"""
-    images = ExerciseImageSerializer(many=True, read_only=True)  # Include all images
-    tags = ExerciseTagSerializer(many=True, read_only=True)  # Include tag names
+    tags = ExerciseTagSerializer(many=True)
+    images = ExerciseImageSerializer(many=True)
 
     class Meta:
         model = Exercise
-        fields = ['id', 'name', 'description', 'tags', 'images']
+        fields = ['id', 'name', 'description', 'tags', 'muscle_group', 'equipment', 'difficulty', 'images']

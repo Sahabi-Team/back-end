@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'client_auth',
     'exercise',
     'workout',
+    'django_filters'
 ]
 
 AUTH_USER_MODEL = 'authentication.User'
@@ -57,6 +58,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
 
