@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'client_auth',
     'exercise',
     'workout',
-    'django_filters'
+    'django_filters',
+    'analytics',
 ]
 
 AUTH_USER_MODEL = 'authentication.User'

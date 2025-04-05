@@ -9,5 +9,6 @@ urlpatterns = [
     path('api/trainer/', include('trainer_auth.urls')),
     path('api/trainee/', include('client_auth.urls')),
     path('api/tests/', include('tests.urls')),
-    path('api/exercises/', include('exercise.urls'))
+    path('api/exercises/', include('exercise.urls')),
+    path("api/analytics/", include("analytics.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
