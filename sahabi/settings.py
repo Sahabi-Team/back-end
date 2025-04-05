@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'workout',
     'django_filters',
     'analytics',
+    'permissions',
 ]
 
 AUTH_USER_MODEL = 'authentication.User'
