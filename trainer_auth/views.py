@@ -5,7 +5,10 @@ from rest_framework.views import APIView
 from rest_framework import status
 from .models import Trainer
 from .serializers import TrainerSerializer, UpdateTrainerSerializer
-
+from client_auth.serializers import TraineeSerializer
+from client_auth.models import Trainee
+from workout.models import WorkoutPlan
+from permissions.permissions import IsTrainer
 class TrainerDetailView(RetrieveAPIView):
     serializer_class = TrainerSerializer
     permission_classes = [IsAuthenticated]  # Ensure JWT authentication is required
@@ -48,3 +51,14 @@ class UpdateTrainerView(RetrieveUpdateAPIView):
     def get_object(self):
         """Ensure only the logged-in trainee can update their info."""
         return self.request.user.trainer_profile  # Access trainee via related_name
+
+
+class TrainerTraineesView(APIView):
+    permission_classes = [IsAuthenticated,IsTrainer]
+
+    def get(self, request):
+        trainer = request.user.trainer_profile 
+        trainee_ids = WorkoutPlan.objects.filter(trainer=trainer).values_list('trainee', flat=True).distinct()
+        trainees = Trainee.objects.filter(id__in=trainee_ids)
+        serializer = TraineeSerializer(trainees, many=True)
+        return Response(serializer.data)
