@@ -9,13 +9,14 @@ class User(AbstractUser):
         (TRAINEE, 'Trainee'),
         (TRAINER, 'Trainer'),
     ]
-
+    first_name = models.CharField( max_length=150, blank=False)
+    last_name = models.CharField(max_length=150, blank=False)
     email = models.EmailField(unique=True)
-    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    phone_number = models.CharField(max_length=15, blank=False, null=True)
     usertype = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, default=TRAINEE)  # Default to 'trainee'
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email']
+    REQUIRED_FIELDS = ['email','phone_number']
 
     def __str__(self):
         return self.email
