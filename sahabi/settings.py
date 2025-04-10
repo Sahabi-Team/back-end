@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django_filters',
     'analytics',
     'permissions',
+    'drf_yasg',
 ]
 
 AUTH_USER_MODEL = 'authentication.User'
@@ -153,3 +154,15 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description': 'JWT Authorization header using the Bearer scheme. Example: "Bearer {token}"',
+        }
+    },
+    'USE_SESSION_AUTH': False,
+}

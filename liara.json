@@ -1,0 +1,18 @@
+{
+  "app": "anzhectortabriz",
+  "platform": "django",
+  "port": 8000,
+  "build": {
+    "location": "iran",
+    "commands": [
+      "pip install -r requirements.txt",
+      "python manage.py makemigrations",
+      "python manage.pt migrate"
+    ]
+  },
+  "start": {
+    "command": "python manage.py runserver"
+  },
+  "disks": []
+  
+}
