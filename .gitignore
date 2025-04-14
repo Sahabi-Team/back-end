@@ -3,10 +3,10 @@ __pycache__/
 *.pyc
 
 # Ignore database file
-db.sqlite3
+# db.sqlite3
 
 # Ignore media uploads
-media/
+# media/
 
 migrations/
 
