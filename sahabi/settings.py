@@ -26,7 +26,7 @@ SECRET_KEY = '605foi!lm@ctdu%@fzo9hsf(-+5=tm$kv-6wi_68szks=4ho54'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['ighader.pythonanywhere.com']
 
 
 # Application definition
