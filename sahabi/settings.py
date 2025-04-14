@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['ighader.pythonanywhere.com','localhost','127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -50,7 +51,7 @@ INSTALLED_APPS = [
     'analytics',
     'permissions',
     'drf_yasg',
-    'corsheaders',
+    
 ]
 
 AUTH_USER_MODEL = 'authentication.User'
@@ -67,23 +68,26 @@ REST_FRAMEWORK = {
 
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    'sahabi.middleware.CustomCORSHeadersMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # should be first
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
+    'django.middleware.common.CommonMiddleware',  # should be second
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
+
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:5173",
+#     "http://127.0.0.1:5173",
+# ]
+
 CORS_ALLOW_ALL_ORIGINS = True
 ROOT_URLCONF = 'sahabi.urls'
+
 
 TEMPLATES = [
     {
