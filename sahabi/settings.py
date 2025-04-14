@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '605foi!lm@ctdu%@fzo9hsf(-+5=tm$kv-6wi_68szks=4ho54'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['ighader.pythonanywhere.com']
 
@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'analytics',
     'permissions',
     'drf_yasg',
+    'corsheaders',
 ]
 
 AUTH_USER_MODEL = 'authentication.User'
@@ -73,8 +74,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:5173",
+# ]
+CORS_ALLOW_ALL_ORIGINS = True
 ROOT_URLCONF = 'sahabi.urls'
 
 TEMPLATES = [
@@ -100,7 +106,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'mohammadhosseinpanbechi8908@gmail.com'
-EMAIL_HOST_PASSWORD = 'pvvd acge atkv bble' 
+EMAIL_HOST_PASSWORD = 'pvvd acge atkv bble'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -115,6 +121,8 @@ DATABASES = {
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
