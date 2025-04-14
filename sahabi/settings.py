@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '605foi!lm@ctdu%@fzo9hsf(-+5=tm$kv-6wi_68szks=4ho54'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['ighader.pythonanywhere.com']
+ALLOWED_HOSTS = ['ighader.pythonanywhere.com','localhost','127.0.0.1']
 
 
 # Application definition
