@@ -155,6 +155,35 @@ class PasswordResetConfirmView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# views.py
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+
+class WhoAmI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        # profile = user.get_profile()
+        data = {
+            "username": user.username,
+            "email": user.email,
+            "usertype": user.usertype,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "phone_number": user.phone_number,
+        }
+
+        # if profile:
+        #     data["profile"] = {
+        #         key: getattr(profile, key)
+        #         for key in profile._meta.fields_map.keys()
+        #         if hasattr(profile, key)
+        #     }
+
+        return Response(data)
+
 # class PasswordResetRequestView(APIView):
 #     def post(self, request):
 #         serializer = PasswordResetRequestSerializer(data=request.data)
