@@ -10,6 +10,7 @@ from .serializers import (
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
 
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -153,6 +154,40 @@ class PasswordResetConfirmView(APIView):
             serializer.save(uid, token)
             return Response({"message": "Password reset successful!"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UpdateProfilePictureView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
+
+    @swagger_auto_schema(
+        operation_description="Update user's profile picture",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'profile_picture': openapi.Schema(
+                    type=openapi.TYPE_FILE,
+                    description='Profile picture file'
+                ),
+            },
+        ),
+        responses={200: "Profile picture updated successfully", 400: "Invalid request"}
+    )
+    def post(self, request):
+        if 'profile_picture' not in request.FILES:
+            return Response(
+                {"error": "No profile picture provided"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        user = request.user
+        user.profile_picture = request.FILES['profile_picture']
+        user.save()
+        
+        return Response({
+            "message": "Profile picture updated successfully",
+            "profile_picture_url": request.build_absolute_uri(user.profile_picture.url)
+        }, status=status.HTTP_200_OK)
 
 
 # class PasswordResetRequestView(APIView):

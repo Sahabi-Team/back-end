@@ -13,6 +13,7 @@ class User(AbstractUser):
     last_name = models.CharField(max_length=150, blank=False)
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=15, blank=False, null=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
     usertype = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, default=TRAINEE)  # Default to 'trainee'
 
     USERNAME_FIELD = 'username'

@@ -18,6 +18,7 @@ class TraineeSerializer(serializers.ModelSerializer):
             "email": obj.user.email,
             "username": obj.user.username,
             "phone_number": obj.user.phone_number,
+            "profile_picture": obj.user.profile_picture.url if obj.user.profile_picture else None,
         }
 
 
@@ -26,12 +27,14 @@ class UpdateTraineeSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=False)
     username = serializers.CharField(required=False)
     phone_number = serializers.CharField(required=False, allow_blank=True)
+    profile_picture = serializers.ImageField(required=False, allow_null=True)
+    delete_profile_picture = serializers.BooleanField(required=False, write_only=True)
 
     user = serializers.SerializerMethodField()  # Include full user details in the response
 
     class Meta:
         model = Trainee
-        fields = ["user", "email", "username", "phone_number", "height", "weight"]
+        fields = ["user", "email", "username", "phone_number", "height", "weight", "profile_picture", "delete_profile_picture"]
 
     def get_user(self, obj):
         """Return the associated user's details in the response"""
@@ -39,6 +42,7 @@ class UpdateTraineeSerializer(serializers.ModelSerializer):
             "email": obj.user.email,
             "username": obj.user.username,
             "phone_number": obj.user.phone_number,
+            "profile_picture": obj.user.profile_picture.url if obj.user.profile_picture else None,
         }
 
     def validate_email(self, value):
@@ -57,8 +61,15 @@ class UpdateTraineeSerializer(serializers.ModelSerializer):
         """Update both the Trainee and User models."""
         user = instance.user  # Get the related User object
 
+        # Handle profile picture deletion
+        if validated_data.get('delete_profile_picture'):
+            if user.profile_picture:
+                user.profile_picture.delete()  # This will delete the file from storage
+            user.profile_picture = None
+            validated_data.pop('delete_profile_picture')
+
         # Extract user-related fields from validated_data
-        user_fields = ["email", "username", "phone_number"]
+        user_fields = ["email", "username", "phone_number", "profile_picture"]
         for field in user_fields:
             if field in validated_data:
                 setattr(user, field, validated_data.pop(field))  # Update user fields

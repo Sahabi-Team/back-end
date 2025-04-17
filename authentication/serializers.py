@@ -14,7 +14,7 @@ from trainer_auth.models import Trainer
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'phone_number')
+        fields = ('id', 'username', 'email', 'phone_number', 'profile_picture')
 
 class RegisterSerializer(serializers.ModelSerializer):
     role = serializers.ChoiceField(choices=["trainee", "trainer"], write_only=True)  # Accept only "trainee" or "trainer"
