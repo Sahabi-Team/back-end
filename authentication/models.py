@@ -9,7 +9,7 @@ class User(AbstractUser):
         (TRAINEE, 'Trainee'),
         (TRAINER, 'Trainer'),
     ]
-    name = models.CharField( max_length=150, blank=False)
+    name = models.CharField( max_length=150, blank=False, default="کاربر بی نام")
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=15, blank=False, null=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
