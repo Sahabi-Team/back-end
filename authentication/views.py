@@ -15,6 +15,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
+from .serializers import ProfilePictureSerializer
 
 class RegisterView(CreateAPIView):
     queryset = User.objects.all()
@@ -187,15 +188,7 @@ class UpdateProfilePictureView(APIView):
 
     @swagger_auto_schema(
         operation_description="Update user's profile picture",
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                'profile_picture': openapi.Schema(
-                    type=openapi.TYPE_FILE,
-                    description='Profile picture file'
-                ),
-            },
-        ),
+        request_body=ProfilePictureSerializer,
         responses={200: "Profile picture updated successfully", 400: "Invalid request"}
     )
     def post(self, request):

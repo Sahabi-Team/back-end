@@ -98,7 +98,8 @@ class PasswordResetSerializer(serializers.Serializer):
         user.set_password(self.validated_data["new_password"])
         user.save()
 
-
+class ProfilePictureSerializer(serializers.Serializer):
+    profile_picture = serializers.ImageField()
 
 # class PasswordResetRequestSerializer(serializers.Serializer):
 #     email = serializers.EmailField()
