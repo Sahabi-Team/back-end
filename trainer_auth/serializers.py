@@ -13,11 +13,11 @@ class TrainerSerializer(serializers.ModelSerializer):
     def get_user(self, obj):
         """Fetch related user details"""
         return {
-            "first_name": obj.user.first_name,
-            "last_name":obj.user.last_name,
+            "name": obj.user.name,
             "email": obj.user.email,
             "username": obj.user.username,
             "phone_number": obj.user.phone_number,
+            "profile_picture": obj.user.profile_picture.url if obj.user.profile_picture else None,
         }
     
 

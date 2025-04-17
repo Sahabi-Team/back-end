@@ -3,6 +3,7 @@ from rest_framework.generics import RetrieveAPIView, RetrieveUpdateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+from rest_framework.parsers import MultiPartParser, FormParser
 from .models import Trainee
 from .serializers import TraineeSerializer, UpdateTraineeSerializer
 
@@ -44,6 +45,7 @@ class TraineeDetailView(RetrieveAPIView):
 class UpdateTraineeView(RetrieveUpdateAPIView):
     serializer_class = UpdateTraineeSerializer
     permission_classes = [IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
 
     def get_object(self):
         """Ensure only the logged-in trainee can update their info."""

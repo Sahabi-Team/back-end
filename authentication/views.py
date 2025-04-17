@@ -10,6 +10,7 @@ from .serializers import (
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
 
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -155,11 +156,6 @@ class PasswordResetConfirmView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# views.py
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-
 class WhoAmI(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -173,6 +169,7 @@ class WhoAmI(APIView):
             "first_name": user.first_name,
             "last_name": user.last_name,
             "phone_number": user.phone_number,
+            "profile_picture": user.profile_picture.url if user.profile_picture else None,
         }
 
         # if profile:
@@ -184,35 +181,36 @@ class WhoAmI(APIView):
 
         return Response(data)
 
-# class PasswordResetRequestView(APIView):
-#     def post(self, request):
-#         serializer = PasswordResetRequestSerializer(data=request.data)
-#         if serializer.is_valid():
-#             email = serializer.validated_data['email']
-#             user = User.objects.get(email=email)
 
-#             # Generate password reset token
-#             uidb64 = urlsafe_base64_encode(force_bytes(user.id))
-#             token = PasswordResetTokenGenerator().make_token(user)
-#             reset_link = f"http://localhost:8000/api/auth/password-reset-confirm/{uidb64}/{token}/"
+class UpdateProfilePictureView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
 
-#             # Send email
-#             send_mail(
-#                 subject="Password Reset Request",
-#                 message=f"Click the link to reset your password: {reset_link}",
-#                 from_email=settings.EMAIL_HOST_USER,
-#                 recipient_list=[email],
-#                 fail_silently=False,
-#             )
-
-#             return Response({"message": "Password reset email sent."}, status=status.HTTP_200_OK)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-# class PasswordResetConfirmView(APIView):
-#     def post(self, request, uidb64, token):
-#         serializer = PasswordResetConfirmSerializer(data={**request.data, "uidb64": uidb64, "token": token})
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response({"message": "Password reset successful."}, status=status.HTTP_200_OK)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    @swagger_auto_schema(
+        operation_description="Update user's profile picture",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'profile_picture': openapi.Schema(
+                    type=openapi.TYPE_FILE,
+                    description='Profile picture file'
+                ),
+            },
+        ),
+        responses={200: "Profile picture updated successfully", 400: "Invalid request"}
+    )
+    def post(self, request):
+        if 'profile_picture' not in request.FILES:
+            return Response(
+                {"error": "No profile picture provided"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        user = request.user
+        user.profile_picture = request.FILES['profile_picture']
+        user.save()
+        
+        return Response({
+            "message": "Profile picture updated successfully",
+            "profile_picture_url": request.build_absolute_uri(user.profile_picture.url)
+        }, status=status.HTTP_200_OK)
