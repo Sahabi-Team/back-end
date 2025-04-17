@@ -23,6 +23,7 @@ class TraineeSerializer(serializers.ModelSerializer):
 
 class UpdateTraineeSerializer(serializers.ModelSerializer):
     # User fields
+    name = serializers.CharField(required=False)
     email = serializers.EmailField(required=False)
     username = serializers.CharField(required=False)
     phone_number = serializers.CharField(required=False, allow_blank=True)
@@ -33,11 +34,12 @@ class UpdateTraineeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Trainee
-        fields = ["user", "email", "username", "phone_number", "height", "weight", "profile_picture", "delete_profile_picture"]
+        fields = ["user", "email", "username", "name", "phone_number", "height", "weight", "profile_picture", "delete_profile_picture"]
 
     def get_user(self, obj):
         """Return the associated user's details in the response"""
         return {
+            "name": obj.user.name,
             "email": obj.user.email,
             "username": obj.user.username,
             "phone_number": obj.user.phone_number,
@@ -68,7 +70,7 @@ class UpdateTraineeSerializer(serializers.ModelSerializer):
             validated_data.pop('delete_profile_picture')
 
         # Extract user-related fields from validated_data
-        user_fields = ["email", "username", "phone_number", "profile_picture"]
+        user_fields = ["email", "username", "phone_number", "profile_picture", "name"]
         for field in user_fields:
             if field in validated_data:
                 setattr(user, field, validated_data.pop(field))  # Update user fields
