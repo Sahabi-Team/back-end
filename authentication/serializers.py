@@ -21,7 +21,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["id",'first_name',"last_name", "username", "email", "password", "phone_number", "role"]
+        fields = ["id", "name", "username", "email", "password", "phone_number", "role"]
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
@@ -38,16 +38,8 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class ChangePasswordSerializer(serializers.Serializer):
-    old_password = serializers.CharField(write_only=True)
     new_password = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)
-
-    def validate_old_password(self, value):
-        """Check if the old password matches the user's current password"""
-        user = self.context['request'].user
-        if not user.check_password(value):
-            raise serializers.ValidationError("Old password is incorrect.")
-        return value
 
     def validate(self, data):
         """Check if the new password and confirm password match."""
