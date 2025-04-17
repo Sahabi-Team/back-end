@@ -166,8 +166,7 @@ class WhoAmI(APIView):
             "username": user.username,
             "email": user.email,
             "usertype": user.usertype,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
+            "first_name": user.name,
             "phone_number": user.phone_number,
             "profile_picture": user.profile_picture.url if user.profile_picture else None,
         }
