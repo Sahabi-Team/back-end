@@ -68,3 +68,15 @@ class UpdateTrainerSerializer(serializers.ModelSerializer):
 
         # Update remaining Trainer fields (expertise, experience_years)
         return super().update(instance, validated_data)
+
+
+
+
+class FilteredTrainerSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='user.name')
+    email = serializers.EmailField(source='user.email')
+    profile_picture = serializers.ImageField(source='user.profile_picture')
+
+    class Meta:
+        model = Trainer
+        fields = ['name', 'email', 'profile_picture', 'expertise', 'experience_years', 'rating']
