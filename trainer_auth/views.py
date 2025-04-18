@@ -23,7 +23,7 @@ from .models import Trainer
 from .serializers import (
     TrainerSerializer,
     UpdateTrainerSerializer,
-    FilteredTrainerSerializer
+    TrainerPublicProfileSerializer
 )
 from client_auth.models import Trainee
 from client_auth.serializers import TraineeSerializer
@@ -89,7 +89,7 @@ class TrainerTraineesView(APIView):
 class FilteredTrainerListView(ListAPIView):
     permission_classes=[AllowAny]
     queryset = Trainer.objects.all()
-    serializer_class = FilteredTrainerSerializer
+    serializer_class = TrainerPublicProfileSerializer
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['expertise']
     ordering_fields = ['experience_years', 'rating']
@@ -108,7 +108,7 @@ class FilteredTrainerListView(ListAPIView):
                 enum=['experience_years', '-experience_years', 'rating', '-rating']
             ),
         ],
-        responses={200: FilteredTrainerSerializer(many=True)}
+        responses={200: TrainerPublicProfileSerializer(many=True)}
     )
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)

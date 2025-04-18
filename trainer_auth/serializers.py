@@ -70,13 +70,16 @@ class UpdateTrainerSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
-
-
-class FilteredTrainerSerializer(serializers.ModelSerializer):
+class TrainerPublicProfileSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source='user.name')
     email = serializers.EmailField(source='user.email')
     profile_picture = serializers.ImageField(source='user.profile_picture')
+    rating = serializers.SerializerMethodField()
 
     class Meta:
         model = Trainer
         fields = ['name', 'email', 'profile_picture', 'expertise', 'experience_years', 'rating']
+
+    def get_rating(self, obj):
+        return obj.rating
+
