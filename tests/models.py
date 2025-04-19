@@ -22,7 +22,7 @@ class Test(models.Model):
         ('خونه', 'Home'),
         ('بیرون', 'Outdoor'),
     ]
-    equipment = models.CharField(max_length=10, help_text="Where you prefer to work out")
+    equipment = models.CharField(max_length=20, help_text="Where you prefer to work out")
 
     workout_days = models.CharField(max_length=50, help_text="Preferred workout time (e.g., Morning, Evening, etc.)")
     diseases = models.TextField(blank=True, null=True, help_text="Any illnesses or medical conditions")
