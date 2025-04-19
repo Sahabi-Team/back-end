@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -179,4 +180,12 @@ SWAGGER_SETTINGS = {
         }
     },
     'USE_SESSION_AUTH': False,
+}
+
+# JWT Settings
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),  # Access token expires in 1 day
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),  # Refresh token expires in 7 days
+    'ROTATE_REFRESH_TOKENS': True,  # Get a new refresh token with every refresh
+    'BLACKLIST_AFTER_ROTATION': True,  # Blacklist the old refresh tokens
 }

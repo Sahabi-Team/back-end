@@ -1,9 +1,11 @@
 from django.db import models
 from client_auth.models import Trainee
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Test(models.Model):
     """Model to store fitness test details for a Trainee"""
     trainee = models.ForeignKey(Trainee, on_delete=models.CASCADE, related_name="tests")
+    birth_date = models.DateField(help_text="Trainee's date of birth")
     weight = models.FloatField(help_text="Current weight in kg")
     height = models.FloatField(help_text="Height in cm")
     goal_weight = models.FloatField(help_text="Target weight in kg", null=True, blank=True)
@@ -13,24 +15,35 @@ class Test(models.Model):
         ('gain_muscle', 'Gain Muscle'),
         ('stay_fit', 'Stay Fit'),
     ]
-    goal = models.CharField(max_length=20, choices=GOAL_CHOICES, help_text="Overall fitness goal")
+    goal = models.CharField(max_length=20, help_text="Overall fitness goal")
 
     WORKOUT_ROOM_CHOICES = [
-        ('gym', 'Gym'),
-        ('home', 'Home'),
-        ('outdoor', 'Outdoor'),
+        ('باشگاه', 'Gym'),
+        ('خونه', 'Home'),
+        ('بیرون', 'Outdoor'),
     ]
-    workout_room = models.CharField(max_length=10, choices=WORKOUT_ROOM_CHOICES, help_text="Where you prefer to work out")
+    equipment = models.CharField(max_length=20, help_text="Where you prefer to work out")
 
-    workout_time = models.CharField(max_length=50, help_text="Preferred workout time (e.g., Morning, Evening, etc.)")
-    illness = models.TextField(blank=True, null=True, help_text="Any illnesses or medical conditions")
+    workout_days = models.CharField(max_length=50, help_text="Preferred workout time (e.g., Morning, Evening, etc.)")
+    diseases = models.TextField(blank=True, null=True, help_text="Any illnesses or medical conditions")
     
-    EXPERIENCE_CHOICES = [
-        ('beginner', 'Beginner'),
-        ('intermediate', 'Intermediate'),
-        ('advanced', 'Advanced'),
+    FOCUS_AREA_CHOICES = [
+        ('arms', 'Arms'),
+        ('legs', 'Legs'),
+        ('core', 'Core'),
+        ('back', 'Back'),
+        ('chest', 'Chest'),
+        ('full_body', 'Full Body'),
     ]
-    workout_experience = models.CharField(max_length=20, choices=EXPERIENCE_CHOICES, help_text="Workout experience level")
+    focus_area = models.CharField(max_length=20, help_text="Primary body area to focus on")
+    
+    fitness_level = models.IntegerField(
+        help_text="Workout experience level (1-6)",
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(6)
+        ]
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
 
