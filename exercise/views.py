@@ -1,12 +1,14 @@
-from rest_framework import generics
-from rest_framework.permissions import AllowAny
-from .models import Exercise
-from .serializers import ExerciseSerializer
 from django_filters.rest_framework import DjangoFilterBackend
-from .filters import ExerciseFilter
-from drf_yasg.utils import swagger_auto_schema
+from rest_framework import generics
 from rest_framework.filters import SearchFilter
+from rest_framework.permissions import AllowAny
+
+from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+
+from .models import Exercise
+from .serializers import ExerciseSerializer, ExerciseDetailSerializer
+from .filters import ExerciseFilter
 
 class ExerciseListView(generics.ListAPIView):
     """API View to fetch all exercises"""
@@ -38,6 +40,21 @@ class FilteredExerciseListView(generics.ListAPIView):
             openapi.Parameter('search', openapi.IN_QUERY, description="Search by name", type=openapi.TYPE_STRING),
         ],
         operation_description="Returns a list of exercises filtered by muscle group, difficulty, equipment, tags, or searched by name."
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+    
+class ExerciseDetailView(generics.RetrieveAPIView):
+    """
+    API View to fetch detailed info about a specific exercise
+    """
+    queryset = Exercise.objects.all().prefetch_related('tags', 'images')
+    serializer_class = ExerciseDetailSerializer
+    permission_classes = [AllowAny]
+    lookup_field = 'id'
+
+    @swagger_auto_schema(
+        operation_description="Retrieve detailed information about a specific exercise by ID."
     )
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)

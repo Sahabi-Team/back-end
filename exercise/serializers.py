@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Exercise, ExerciseImage, ExerciseTag
 
+
 class ExerciseImageSerializer(serializers.ModelSerializer):
     """Serializer for Exercise images"""
     class Meta:
@@ -20,3 +21,23 @@ class ExerciseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Exercise
         fields = ['id', 'name', 'description', 'tags', 'muscle_group', 'equipment', 'difficulty', 'images']
+
+
+class ExerciseDetailSerializer(serializers.ModelSerializer):
+    tags = ExerciseTagSerializer(many=True)
+    images = ExerciseImageSerializer(many=True)
+
+    class Meta:
+        model = Exercise
+        fields = [
+            'id',
+            'name',
+            'description',
+            'tags',
+            'muscle_group',
+            'equipment',
+            'difficulty',
+            'images',
+        ]
+
+
