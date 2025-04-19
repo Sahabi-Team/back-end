@@ -6,5 +6,10 @@ class TestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Test
-        fields = '__all__'  
+        # fields = '__all__'
+        fields = [
+            'id', 'trainee', 'trainee_username', 'birth_date', 'weight', 'height', 
+            'goal_weight', 'goal', 'equipment', 'workout_days', 'diseases', 
+            'focus_area', 'fitness_level', 'created_at'
+        ]
         read_only_fields = ['trainee', 'created_at']  # Ensure trainee is assigned automatically
