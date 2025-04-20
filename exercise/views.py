@@ -34,9 +34,9 @@ class FilteredExerciseListView(generics.ListAPIView):
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter('tags', openapi.IN_QUERY, description="Comma-separated tag names", type=openapi.TYPE_STRING),
-            openapi.Parameter('muscle_group', openapi.IN_QUERY, description="Comma-separated muscle groups", type=openapi.TYPE_STRING),
+            openapi.Parameter('muscle_groups', openapi.IN_QUERY, description="Comma-separated muscle groups", type=openapi.TYPE_STRING),
             openapi.Parameter('difficulty', openapi.IN_QUERY, description="Comma-separated difficulty levels", type=openapi.TYPE_STRING),
-            openapi.Parameter('equipment', openapi.IN_QUERY, description="Comma-separated equipment names", type=openapi.TYPE_STRING),
+            openapi.Parameter('equipments', openapi.IN_QUERY, description="Comma-separated equipment names", type=openapi.TYPE_STRING),
             openapi.Parameter('search', openapi.IN_QUERY, description="Search by name", type=openapi.TYPE_STRING),
         ],
         operation_description="Returns a list of exercises filtered by muscle group, difficulty, equipment, tags, or searched by name."

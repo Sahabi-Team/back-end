@@ -7,19 +7,38 @@ class ExerciseTag(models.Model):
     def __str__(self):
         return self.name
 
+class MuscleGroup(models.Model):
+    """Predefined muscle groups for exercises"""
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
+
+class Equipment(models.Model):
+    """Predefined equipment for exercises"""
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
+
 class Exercise(models.Model):
     """Exercise model containing images, description, and tags"""
     DIFFICULTY_LEVELS = [
-        ('Beginner', 'Beginner'),
-        ('Intermediate', 'Intermediate'),
-        ('Advanced', 'Advanced'),
+        ('مبتدی', 'مبتدی'),
+        ('متوسط', 'متوسط'),
+        ('پیشرفته', 'پیشرفته'),
+    ]
+    WORKOUT_PLACES = [
+        ('باشگاه', 'باشگاه'),
+        ('خانه', 'خانه'),
     ]
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField()
     tags = models.ManyToManyField(ExerciseTag, related_name="exercises")
-    muscle_group = models.CharField(max_length=50)  
-    equipment = models.CharField(max_length=50, blank=True, null=True)  
-    difficulty = models.CharField(max_length=20, choices=DIFFICULTY_LEVELS, default='Beginner')
+    muscle_groups = models.ManyToManyField(MuscleGroup, related_name="exercises")
+    equipments = models.ManyToManyField(Equipment, related_name="exercises", blank=True)
+    difficulty = models.CharField(max_length=20, choices=DIFFICULTY_LEVELS, default='مبتدی')
+    workoutplaces = models.CharField(max_length=20, choices=WORKOUT_PLACES, default='خانه')
 
     def __str__(self):
         return self.name
