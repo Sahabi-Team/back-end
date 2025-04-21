@@ -7,7 +7,13 @@ class WorkoutPlan(models.Model):
     Model representing a workout plan created by a trainer for a specific mentorship.
     Each workout plan belongs to a mentorship and can have multiple exercises.
     """
-    mentorship = models.ForeignKey(Mentorship, on_delete=models.CASCADE, related_name='workout_plans')
+    mentorship = models.ForeignKey(
+        Mentorship, 
+        on_delete=models.CASCADE, 
+        related_name='workout_plans',
+        null=True,  # Allow null temporarily for migration
+        blank=True  # Allow blank temporarily for migration
+    )
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
