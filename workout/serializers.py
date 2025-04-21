@@ -14,10 +14,15 @@ class WorkoutExerciseSerializer(serializers.ModelSerializer):
         write_only=True,
         help_text="ID of the exercise to be added to the workout plan"
     )
+    workout_plan_id = serializers.IntegerField(
+        write_only=True,
+        required=False,
+        help_text="ID of the workout plan (optional when using add_exercise endpoint)"
+    )
 
     class Meta:
         model = WorkoutExercise
-        fields = ['id', 'exercise', 'exercise_id', 'sets', 'reps', 'duration', 'description', 'order']
+        fields = ['id', 'exercise', 'exercise_id', 'workout_plan_id', 'sets', 'reps', 'duration', 'description', 'order']
         read_only_fields = ['id']
         extra_kwargs = {
             'sets': {'help_text': 'Number of sets for this exercise'},
@@ -26,6 +31,18 @@ class WorkoutExerciseSerializer(serializers.ModelSerializer):
             'description': {'help_text': 'Additional instructions or notes for this exercise'},
             'order': {'help_text': 'Order of the exercise in the workout plan'}
         }
+
+    def validate(self, data):
+        """
+        Check that either reps or duration is provided, but not both.
+        """
+        if not data.get('reps') and not data.get('duration'):
+            raise serializers.ValidationError("Either reps or duration must be provided.")
+        
+        if data.get('reps') and data.get('duration'):
+            raise serializers.ValidationError("Provide either reps or duration, not both.")
+        
+        return data
 
 class WorkoutPlanSerializer(serializers.ModelSerializer):
     """

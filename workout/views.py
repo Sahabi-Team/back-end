@@ -1,4 +1,4 @@
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, status, serializers
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.decorators import action
@@ -7,6 +7,7 @@ from drf_yasg import openapi
 from .models import WorkoutPlan, WorkoutExercise
 from .serializers import WorkoutPlanSerializer, WorkoutExerciseSerializer
 from mentorship.models import Mentorship
+from exercise.models import Exercise
 from django.db.models import Q
 
 class IsTrainerOfMentorship(permissions.BasePermission):
@@ -119,10 +120,26 @@ class WorkoutExerciseViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         workout_plan_id = self.request.data.get('workout_plan')
+        exercise_id = self.request.data.get('exercise_id')
+        
         try:
             workout_plan = WorkoutPlan.objects.get(id=workout_plan_id)
+            exercise = Exercise.objects.get(id=exercise_id)
+            
             if workout_plan.mentorship.trainer.user != self.request.user:
                 raise permissions.PermissionDenied("You can only add exercises to your own workout plans.")
-            serializer.save()
+            
+            # Check if either reps or duration is provided
+            if not self.request.data.get('reps') and not self.request.data.get('duration'):
+                raise serializers.ValidationError("Either reps or duration must be provided.")
+            
+            # Check if both reps and duration are provided
+            if self.request.data.get('reps') and self.request.data.get('duration'):
+                raise serializers.ValidationError("Provide either reps or duration, not both.")
+            
+            serializer.save(workout_plan=workout_plan, exercise=exercise)
+            
         except WorkoutPlan.DoesNotExist:
             raise serializers.ValidationError("Workout plan not found.")
+        except Exercise.DoesNotExist:
+            raise serializers.ValidationError("Exercise not found.")
