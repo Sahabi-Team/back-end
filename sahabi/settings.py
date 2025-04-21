@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'analytics',
     'permissions',
     'drf_yasg',
+    'opinions',
     
 ]
 
