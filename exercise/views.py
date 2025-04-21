@@ -47,3 +47,15 @@ class FilteredExerciseListView(generics.ListAPIView):
         return super().get(request, *args, **kwargs)
 
 
+class ExerciseDetailView(generics.RetrieveAPIView):
+    """Retrieve detailed information about a specific exercise by ID."""
+    queryset = Exercise.objects.all().prefetch_related('tags', 'images', 'muscle_groups', 'equipments')
+    serializer_class = ExerciseSerializer
+    permission_classes = [AllowAny]
+    lookup_field = 'id'
+
+    @swagger_auto_schema(
+        operation_description="Retrieve detailed information about a specific exercise by ID."
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
