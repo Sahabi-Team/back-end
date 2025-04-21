@@ -7,7 +7,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 from .models import Exercise
-from .serializers import ExerciseSerializer, ExerciseDetailSerializer
+from .serializers import ExerciseSerializer
 from .filters import ExerciseFilter
 
 class ExerciseListView(generics.ListAPIView):
@@ -49,7 +49,7 @@ class ExerciseDetailView(generics.RetrieveAPIView):
     API View to fetch detailed info about a specific exercise
     """
     queryset = Exercise.objects.all().prefetch_related('tags', 'images')
-    serializer_class = ExerciseDetailSerializer
+    serializer_class = ExerciseSerializer
     permission_classes = [AllowAny]
     lookup_field = 'id'
 
