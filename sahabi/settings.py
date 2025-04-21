@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'permissions',
     'drf_yasg',
     'opinions',
+    'mentorship',
     
 ]
 
