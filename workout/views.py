@@ -1,11 +1,13 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.decorators import action
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from .models import WorkoutPlan, WorkoutExercise
 from .serializers import WorkoutPlanSerializer, WorkoutExerciseSerializer
 from mentorship.models import Mentorship
+from django.db.models import Q
 
 class IsTrainerOfMentorship(permissions.BasePermission):
     """
@@ -47,13 +49,10 @@ class WorkoutPlanViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if hasattr(user, 'trainer'):
-            # If user is a trainer, return workout plans for their mentorships
-            return WorkoutPlan.objects.filter(mentorship__trainer__user=user)
-        elif hasattr(user, 'trainee'):
-            # If user is a trainee, return workout plans for their mentorships
-            return WorkoutPlan.objects.filter(mentorship__trainee__user=user)
-        return WorkoutPlan.objects.none()
+        # Get all workout plans where the user is either the trainer or trainee
+        return WorkoutPlan.objects.filter(
+            Q(mentorship__trainer__user=user) | Q(mentorship__trainee__user=user)
+        ).select_related('mentorship', 'mentorship__trainer__user', 'mentorship__trainee__user')
 
     def perform_create(self, serializer):
         mentorship_id = self.request.data.get('mentorship')
@@ -114,11 +113,9 @@ class WorkoutExerciseViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if hasattr(user, 'trainer'):
-            return WorkoutExercise.objects.filter(workout_plan__mentorship__trainer__user=user)
-        elif hasattr(user, 'trainee'):
-            return WorkoutExercise.objects.filter(workout_plan__mentorship__trainee__user=user)
-        return WorkoutExercise.objects.none()
+        return WorkoutExercise.objects.filter(
+            Q(workout_plan__mentorship__trainer__user=user) | Q(workout_plan__mentorship__trainee__user=user)
+        ).select_related('workout_plan', 'workout_plan__mentorship', 'exercise')
 
     def perform_create(self, serializer):
         workout_plan_id = self.request.data.get('workout_plan')
