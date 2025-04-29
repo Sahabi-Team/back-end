@@ -26,8 +26,8 @@ jobs:
 
     - name: Build and Push Docker Image
       run: |
-        docker-compose build
-        docker-compose push
+        docker compose build
+        docker compose push
     
     - name: Copy files to server via SSH
       uses: appleboy/scp-action@v0.1.0
@@ -48,8 +48,8 @@ jobs:
 
           cd /home/debian/
 
-          docker compose pull
+          docker-compose pull
           
-          docker compose down
+          docker-compose down
           
-          docker compose up -d
+          docker-compose up -d
