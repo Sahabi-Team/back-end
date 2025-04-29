@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - deployment
+  pull_request:
+    branches:
+      - deployment
+    types:
+      - closed
+
 
 
 jobs:
