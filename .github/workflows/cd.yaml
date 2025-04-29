@@ -54,8 +54,8 @@ jobs:
 
           cd /home/${{ secrets.SERVER_USER }}/
 
-          docker-compose pull
+          docker compose pull
           
-          docker-compose down
+          docker compose down
           
-          docker-compose up -d
+          docker compose up -d
