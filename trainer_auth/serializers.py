@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
-from .models import Trainer
+from .models import Trainer, Comment
 from authentication.models import User
 
 class TrainerSerializer(serializers.ModelSerializer):
@@ -11,7 +10,6 @@ class TrainerSerializer(serializers.ModelSerializer):
         fields = ["user", "expertise", "experience_years"]
 
     def get_user(self, obj):
-        """Fetch related user details"""
         return {
             "name": obj.user.name,
             "email": obj.user.email,
@@ -19,23 +17,19 @@ class TrainerSerializer(serializers.ModelSerializer):
             "phone_number": obj.user.phone_number,
             "profile_picture": obj.user.profile_picture.url if obj.user.profile_picture else None,
         }
-    
 
 
 class UpdateTrainerSerializer(serializers.ModelSerializer):
-    # User fields
     email = serializers.EmailField(required=False)
     username = serializers.CharField(required=False)
     phone_number = serializers.CharField(required=False, allow_blank=True)
-
-    user = serializers.SerializerMethodField()  # Include full user details in the response
+    user = serializers.SerializerMethodField()
 
     class Meta:
         model = Trainer
         fields = ["user", "email", "username", "phone_number", "expertise", "experience_years"]
 
     def get_user(self, obj):
-        """Return the associated user's details in the response"""
         return {
             "email": obj.user.email,
             "username": obj.user.username,
@@ -43,30 +37,21 @@ class UpdateTrainerSerializer(serializers.ModelSerializer):
         }
 
     def validate_email(self, value):
-        """Ensure the email is unique"""
         if User.objects.filter(email=value).exclude(id=self.instance.user.id).exists():
             raise serializers.ValidationError("This email is already in use.")
         return value
 
     def validate_username(self, value):
-        """Ensure the username is unique"""
         if User.objects.filter(username=value).exclude(id=self.instance.user.id).exists():
             raise serializers.ValidationError("This username is already taken.")
         return value
 
     def update(self, instance, validated_data):
-        """Update both the Trainer and User models."""
-        user = instance.user  # Get the related User object
-
-        # Extract user-related fields from validated_data
-        user_fields = ["email", "username", "phone_number"]
-        for field in user_fields:
+        user = instance.user
+        for field in ["email", "username", "phone_number"]:
             if field in validated_data:
-                setattr(user, field, validated_data.pop(field))  # Update user fields
-
-        user.save()  # Save the updated User instance
-
-        # Update remaining Trainer fields (expertise, experience_years)
+                setattr(user, field, validated_data.pop(field))
+        user.save()
         return super().update(instance, validated_data)
 
 
@@ -83,3 +68,12 @@ class TrainerPublicProfileSerializer(serializers.ModelSerializer):
     def get_rating(self, obj):
         return obj.rating
 
+
+class CommentSerializer(serializers.ModelSerializer):
+    trainee_name = serializers.CharField(source='trainee.user.name', read_only=True)
+    trainee_email = serializers.EmailField(source='trainee.user.email', read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'trainee_name', 'trainee_email', 'trainer', 'comment', 'rating', 'created_at']
+        read_only_fields = ['trainee_name', 'trainee_email', 'created_at']
