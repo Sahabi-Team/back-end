@@ -190,7 +190,7 @@ class FilteredTrainerListView(generics.ListAPIView):
         specialities = params.get('specialities')
         if specialities:
             speciality_list = [s.strip() for s in specialities.split(',')]
-            queryset = queryset.filter(specialties__name__in=speciality_list).distinct()
+            queryset = queryset.filter(specialties__in=speciality_list).distinct()
 
         # Filter by experience
         experience = params.get('experience')
