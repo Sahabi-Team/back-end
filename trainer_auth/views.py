@@ -27,7 +27,7 @@ from .serializers import (
 )
 from client_auth.models import Trainee
 from client_auth.serializers import TraineeSerializer
-from workout.models import WorkoutPlan
+from mentorship.models import Mentorship
 from permissions.permissions import IsTrainer
 
 
@@ -131,7 +131,7 @@ class TrainerTraineesView(APIView):
 
     def get(self, request):
         trainer = request.user.trainer_profile 
-        trainee_ids = WorkoutPlan.objects.filter(trainer=trainer).values_list('trainee', flat=True).distinct()
+        trainee_ids = Mentorship.objects.filter(trainer=trainer).values_list('trainee', flat=True).distinct()
         trainees = Trainee.objects.filter(id__in=trainee_ids)
         serializer = TraineeSerializer(trainees, many=True)
         return Response(serializer.data)
