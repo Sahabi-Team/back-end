@@ -147,23 +147,23 @@ class FilteredTrainerListView(generics.ListAPIView):
     ordering_fields = ['experience', 'avg_rating']
     search_fields = ['user__name', 'user__username', 'user__first_name', 'user__last_name']
 
-    # @swagger_auto_schema(
-    #     operation_description="Retrieve a list of trainers filtered by various parameters.",
-    #     manual_parameters=[
-    #         openapi.Parameter('search', openapi.IN_QUERY, description="Search for a trainer by name, username, first name, or last name.", type=openapi.TYPE_STRING),
-    #         openapi.Parameter('specialities', openapi.IN_QUERY, description="Comma-separated list of specialties to filter by.", type=openapi.TYPE_STRING),
-    #         openapi.Parameter('experience', openapi.IN_QUERY, description="Experience range(s) in the format 'min-max', e.g., '2-5,6-10'.", type=openapi.TYPE_STRING),
-    #         openapi.Parameter('rating', openapi.IN_QUERY, description="Comma-separated list of ratings to filter by.", type=openapi.TYPE_STRING),
-    #         openapi.Parameter('price_min', openapi.IN_QUERY, description="Minimum price filter.", type=openapi.TYPE_NUMBER),
-    #         openapi.Parameter('price_max', openapi.IN_QUERY, description="Maximum price filter.", type=openapi.TYPE_NUMBER),
-    #         openapi.Parameter('available', openapi.IN_QUERY, description="Filter by availability (true/false).", type=openapi.TYPE_BOOLEAN),
-    #     ],
-    #     responses={
-    #         200: TrainerSerializer(many=True),
-    #         400: openapi.Response('Bad Request'),
-    #         404: openapi.Response('Not Found'),
-    #     }
-    # )
+    @swagger_auto_schema(
+        operation_description="Retrieve a list of trainers filtered by various parameters.",
+        manual_parameters=[
+            openapi.Parameter('search', openapi.IN_QUERY, description="Search for a trainer by name, username, first name, or last name.", type=openapi.TYPE_STRING),
+            openapi.Parameter('specialties', openapi.IN_QUERY, description="Comma-separated list of specialties to filter by.", type=openapi.TYPE_STRING),
+            openapi.Parameter('experience', openapi.IN_QUERY, description="Experience range(s) in the format 'min-max', e.g., '2-5,6-10'.", type=openapi.TYPE_STRING),
+            openapi.Parameter('rating', openapi.IN_QUERY, description="Comma-separated list of ratings to filter by.", type=openapi.TYPE_STRING),
+            openapi.Parameter('price_min', openapi.IN_QUERY, description="Minimum price filter.", type=openapi.TYPE_NUMBER),
+            openapi.Parameter('price_max', openapi.IN_QUERY, description="Maximum price filter.", type=openapi.TYPE_NUMBER),
+            openapi.Parameter('available', openapi.IN_QUERY, description="Filter by availability (true/false).", type=openapi.TYPE_BOOLEAN),
+        ],
+        responses={
+            200: TrainerSerializer(many=True),
+            400: openapi.Response('Bad Request'),
+            404: openapi.Response('Not Found'),
+        }
+    )
     def get_queryset(self):
         queryset = Trainer.objects.all()
         params = self.request.query_params
