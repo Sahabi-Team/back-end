@@ -164,10 +164,13 @@ class WhoAmI(APIView):
         user = request.user
         # profile = user.get_profile()
         data = {
+            "id": user.id,
             "username": user.username,
             "email": user.email,
             "usertype": user.usertype,
-            "first_name": user.name,
+            "name": user.name,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
             "phone_number": user.phone_number,
             "profile_picture": user.profile_picture.url if user.profile_picture else None,
         }
