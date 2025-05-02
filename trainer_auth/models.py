@@ -2,8 +2,6 @@ from django.db import models
 from authentication.models import User  
 
 class Trainer(models.Model):
-    firstName = models.CharField(max_length=100, default="")
-    lastName = models.CharField(max_length=100, default="")
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='trainer_profile')
     bio = models.TextField(blank=True, default="")
     experience = models.TextField(blank=True, default="")
