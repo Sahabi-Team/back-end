@@ -2,9 +2,15 @@ from django.db import models
 from authentication.models import User  
 
 class Trainer(models.Model):
+    firstName = models.CharField(max_length=100, default="")
+    lastName = models.CharField(max_length=100, default="")
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='trainer_profile')
-    expertise = models.CharField(max_length=100, default="body-building")
-    experience_years = models.IntegerField(default=0)
+    bio = models.TextField(blank=True, default="")
+    experience = models.TextField(blank=True, default="")
+    isAvailableForReservation = models.BooleanField(default=True)
+    price = models.FloatField(default=0.0)
+    specialties = models.TextField(blank=True, default="")
+    certificates = models.TextField(blank=True, default="")
 
     def __str__(self):
         return self.user.email
