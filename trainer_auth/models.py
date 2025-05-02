@@ -1,6 +1,7 @@
 from django.db import models
 from authentication.models import User
 
+
 class Trainer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='trainer_profile')
     bio = models.TextField(blank=True, default="")
@@ -11,12 +12,13 @@ class Trainer(models.Model):
     certificates = models.TextField(blank=True, default="")
 
     def __str__(self):
-        return str(self.rating())
+        return "bbbb"
 
     @property
     def rating(self):
         from math import ceil
         return (self.comments_received.aggregate(avg_rating=models.Avg('rating'))['avg_rating'] or 0.0)
+
 
 
 class Comment(models.Model):
