@@ -1,5 +1,5 @@
 from django.db import models
-from authentication.models import User  
+from authentication.models import User
 
 class Trainer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='trainer_profile')
@@ -16,15 +16,18 @@ class Trainer(models.Model):
     @property
     def rating(self):
         from django.db.models import Avg
-        return self.ratings_received.aggregate(avg_rating=Avg('rating'))['avg_rating'] or 0.0
+        return self.comments_received.aggregate(avg_rating=models.Avg('rating'))['avg_rating'] or 0.0
 
-class Rating(models.Model):
-    trainee = models.ForeignKey('client_auth.Trainee', on_delete=models.CASCADE, related_name='ratings_given')
-    trainer = models.ForeignKey('trainer_auth.Trainer', on_delete=models.CASCADE, related_name='ratings_received')
-    rating = models.PositiveSmallIntegerField()  
+
+class Comment(models.Model):
+    trainee = models.ForeignKey('client_auth.Trainee', on_delete=models.CASCADE, related_name='comments_given')
+    trainer = models.ForeignKey('trainer_auth.Trainer', on_delete=models.CASCADE, related_name='comments_received')
+    comment = models.TextField()
+    rating = models.PositiveSmallIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('trainee', 'trainer')  
+        unique_together = ('trainee', 'trainer')
+
     def __str__(self):
         return f"{self.trainee.user.email} → {self.trainer.user.email} = {self.rating}"

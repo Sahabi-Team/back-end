@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
-from .models import Trainer
+from .models import Trainer, Comment
 from authentication.models import User
 from drf_yasg.utils import swagger_serializer_method
 
@@ -24,7 +23,6 @@ class TrainerSerializer(serializers.ModelSerializer):
         help_text="User details including name, email, username, phone number, and profile picture URL"
     ))
     def get_user(self, obj):
-        """Fetch related user details"""
         return {
             "first_name": obj.user.first_name,
             "last_name": obj.user.last_name,
@@ -33,7 +31,6 @@ class TrainerSerializer(serializers.ModelSerializer):
             "phone_number": obj.user.phone_number,
             "profile_picture": obj.user.profile_picture.url if obj.user.profile_picture else None,
         }
-    
 
 
 class UpdateTrainerSerializer(serializers.ModelSerializer):
@@ -77,13 +74,11 @@ class UpdateTrainerSerializer(serializers.ModelSerializer):
                  "profile_picture", "delete_profile_picture"]
 
     def validate_email(self, value):
-        """Ensure the email is unique"""
         if User.objects.filter(email=value).exclude(id=self.instance.user.id).exists():
             raise serializers.ValidationError("This email is already in use.")
         return value
 
     def validate_username(self, value):
-        """Ensure the username is unique"""
         if User.objects.filter(username=value).exclude(id=self.instance.user.id).exists():
             raise serializers.ValidationError("This username is already taken.")
         return value
@@ -142,3 +137,12 @@ class TrainerPublicProfileSerializer(serializers.ModelSerializer):
     def get_rating(self, obj):
         return obj.rating
 
+
+class CommentSerializer(serializers.ModelSerializer):
+    trainee_name = serializers.CharField(source='trainee.user.name', read_only=True)
+    trainee_email = serializers.EmailField(source='trainee.user.email', read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'trainee_name', 'trainee_email', 'trainer', 'comment', 'rating', 'created_at']
+        read_only_fields = ['trainee_name', 'trainee_email', 'created_at']

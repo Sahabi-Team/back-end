@@ -6,6 +6,9 @@ from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
 from .models import Trainee
 from .serializers import TraineeSerializer, UpdateTraineeSerializer
+from rest_framework import status, generics, permissions
+from django.shortcuts import get_object_or_404
+from authentication.models import User
 
 class TraineeDetailView(RetrieveAPIView):
     serializer_class = TraineeSerializer
@@ -50,3 +53,20 @@ class UpdateTraineeView(RetrieveUpdateAPIView):
     def get_object(self):
         """Ensure only the logged-in trainee can update their info."""
         return self.request.user.trainee_profile  # Access trainee via related_name
+
+
+class GetTraineeIdByUsername(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, username):
+        user = get_object_or_404(User, username=username)
+        trainee = get_object_or_404(Trainee, user=user)
+        return Response({'trainee_id': trainee.id}, status=status.HTTP_200_OK)
+    
+class GetTraineeUsernameById(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, trainee_id):
+        trainee = get_object_or_404(Trainee, id=trainee_id)
+        username = trainee.user.username
+        return Response({'username': username}, status=status.HTTP_200_OK)
