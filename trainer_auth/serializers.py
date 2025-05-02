@@ -11,12 +11,12 @@ class TrainerSerializer(serializers.ModelSerializer):
     phone_number = serializers.CharField(required=False, allow_blank=True)
     profile_picture = serializers.ImageField(required=False, allow_null=True)
     delete_profile_picture = serializers.BooleanField(required=False, write_only=True)
-
+    rating = serializers.SerializerMethodField()
     user = serializers.SerializerMethodField()
 
     class Meta:
         model = Trainer
-        fields = ["user", "email", "username", "first_name", "last_name", "phone_number", "profile_picture", "delete_profile_picture", "bio", "experience", "isAvailableForReservation", "price", "specialties", "certificates"]
+        fields = ["user", "email", "username", "first_name", "last_name", "phone_number", "profile_picture", "delete_profile_picture", "bio", "experience", "isAvailableForReservation", "price", "specialties", "certificates","rating"]
 
     @swagger_serializer_method(serializer_or_field=serializers.DictField(
         child=serializers.CharField(),
@@ -31,7 +31,8 @@ class TrainerSerializer(serializers.ModelSerializer):
             "phone_number": obj.user.phone_number,
             "profile_picture": obj.user.profile_picture.url if obj.user.profile_picture else None,
         }
-
+    def get_rating(self, obj):
+        return obj.rating
 
 class UpdateTrainerSerializer(serializers.ModelSerializer):
     # User fields
