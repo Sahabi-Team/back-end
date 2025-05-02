@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'opinions',
     'mentorship',
-    
+    'notification',
 ]
 
 AUTH_USER_MODEL = 'authentication.User'
