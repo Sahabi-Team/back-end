@@ -144,7 +144,7 @@ class FilteredTrainerListView(generics.ListAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = TrainerSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
-    ordering_fields = ['experience', 'rating']
+    ordering_fields = ['experience', 'avg_rating']
     search_fields = ['user__name', 'user__username', 'user__first_name', 'user__last_name']
 
     # @swagger_auto_schema(
@@ -209,7 +209,7 @@ class FilteredTrainerListView(generics.ListAPIView):
         # print(queryset[0].__dict__)
         rating = params.get('rating')
         if rating:
-            print(rating,"777")
+            # print(rating,"777")
             try:
                 rating_values = [float(r.strip()) for r in rating.split(',')]
                 queryset = queryset.filter(ratingg__in=rating_values)
