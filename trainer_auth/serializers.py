@@ -29,6 +29,7 @@ class TrainerSerializer(serializers.ModelSerializer):
     ))
     def get_user(self, obj):
         return {
+            "name": obj.user.name,
             "first_name": obj.user.first_name,
             "last_name": obj.user.last_name,
             "email": obj.user.email,
