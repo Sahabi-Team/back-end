@@ -12,7 +12,7 @@ class Trainer(models.Model):
     certificates = models.TextField(blank=True, default="")
 
     def __str__(self):
-        return "bbbb"
+        return self.user.email
 
     @property
     def rating(self):
