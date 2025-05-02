@@ -5,8 +5,8 @@ from authentication.models import User
 from drf_yasg.utils import swagger_serializer_method
 
 class TrainerSerializer(serializers.ModelSerializer):
-    firstName = serializers.CharField(required=False)
-    lastName = serializers.CharField(required=False)
+    first_name = serializers.CharField(required=False)
+    last_name = serializers.CharField(required=False)
     email = serializers.EmailField(required=False)
     username = serializers.CharField(required=False)
     phone_number = serializers.CharField(required=False, allow_blank=True)
@@ -17,7 +17,7 @@ class TrainerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Trainer
-        fields = ["user", "email", "username", "firstName", "lastName", "phone_number", "profile_picture", "delete_profile_picture", "bio", "experience", "isAvailableForReservation", "price", "specialties", "certificates"]
+        fields = ["user", "email", "username", "first_name", "last_name", "phone_number", "profile_picture", "delete_profile_picture", "bio", "experience", "isAvailableForReservation", "price", "specialties", "certificates"]
 
     @swagger_serializer_method(serializer_or_field=serializers.DictField(
         child=serializers.CharField(),
@@ -26,7 +26,8 @@ class TrainerSerializer(serializers.ModelSerializer):
     def get_user(self, obj):
         """Fetch related user details"""
         return {
-            "name": obj.user.name,
+            "first_name": obj.user.first_name,
+            "last_name": obj.user.last_name,
             "email": obj.user.email,
             "username": obj.user.username,
             "phone_number": obj.user.phone_number,
@@ -37,9 +38,13 @@ class TrainerSerializer(serializers.ModelSerializer):
 
 class UpdateTrainerSerializer(serializers.ModelSerializer):
     # User fields
-    name = serializers.CharField(
+    first_name = serializers.CharField(
         required=False,
         help_text="Full name of the trainer"
+    )
+    last_name = serializers.CharField(
+        required=False,
+        help_text="Last name of the trainer"
     )
     email = serializers.EmailField(
         required=False,
@@ -67,7 +72,7 @@ class UpdateTrainerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Trainer
-        fields = ["email", "username", "name", "phone_number", "bio", "experience", 
+        fields = ["email", "username", "phone_number", "bio", "experience", "first_name", "last_name",
                  "isAvailableForReservation", "price", "specialties", "certificates", 
                  "profile_picture", "delete_profile_picture"]
 
@@ -95,7 +100,7 @@ class UpdateTrainerSerializer(serializers.ModelSerializer):
             validated_data.pop('delete_profile_picture')
 
         # Extract user-related fields from validated_data
-        user_fields = ["email", "username", "phone_number", "profile_picture", "name"]
+        user_fields = ["email", "username", "phone_number", "profile_picture", "first_name", "last_name"]
         for field in user_fields:
             if field in validated_data:
                 setattr(user, field, validated_data.pop(field))  # Update user fields
@@ -113,7 +118,8 @@ class UpdateTrainerSerializer(serializers.ModelSerializer):
         """Custom representation to include user details in the response"""
         ret = super().to_representation(instance)
         ret['user'] = {
-            "name": instance.user.name,
+            "first_name": instance.user.first_name,
+            "last_name": instance.user.last_name,
             "email": instance.user.email,
             "username": instance.user.username,
             "phone_number": instance.user.phone_number,
@@ -123,15 +129,15 @@ class UpdateTrainerSerializer(serializers.ModelSerializer):
 
 
 class TrainerPublicProfileSerializer(serializers.ModelSerializer):
-    firstName = serializers.CharField(source='trainer.firstName')
-    lastName = serializers.CharField(source='trainer.lastName')
+    first_name = serializers.CharField(source='user.first_name')
+    last_name = serializers.CharField(source='trainer.last_name')
     email = serializers.EmailField(source='user.email')
     profile_picture = serializers.ImageField(source='user.profile_picture')
     rating = serializers.SerializerMethodField()
 
     class Meta:
         model = Trainer
-        fields = ['firstName', 'lastName', 'email', 'profile_picture', 'rating']
+        fields = ['first_name', 'last_name', 'email', 'profile_picture', 'rating']
 
     def get_rating(self, obj):
         return obj.rating
