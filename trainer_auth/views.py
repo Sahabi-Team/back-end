@@ -39,6 +39,12 @@ from permissions.permissions import IsTrainer, IsTrainee
 from django.shortcuts import get_object_or_404
 from authentication.models import User
 from workout.models import Mentorship
+from rest_framework import generics, permissions, filters
+from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Q, Avg, FloatField, Value
+from django.db.models.functions import Coalesce
+from .models import Trainer
+from .serializers import TrainerPublicProfileSerializer
 
 class TrainerDetailView(generics.RetrieveAPIView):
     serializer_class = TrainerSerializer
@@ -136,11 +142,102 @@ class TrainerTraineesView(APIView):
 
 class FilteredTrainerListView(generics.ListAPIView):
     permission_classes = [permissions.AllowAny]
-    queryset = Trainer.objects.all()
-    serializer_class = TrainerPublicProfileSerializer
-    filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ['expertise']
-    ordering_fields = ['experience_years', 'rating']
+    serializer_class = TrainerSerializer
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
+    ordering_fields = ['experience', 'rating']
+    search_fields = ['user__name', 'user__username', 'user__first_name', 'user__last_name']
+
+    # @swagger_auto_schema(
+    #     operation_description="Retrieve a list of trainers filtered by various parameters.",
+    #     manual_parameters=[
+    #         openapi.Parameter('search', openapi.IN_QUERY, description="Search for a trainer by name, username, first name, or last name.", type=openapi.TYPE_STRING),
+    #         openapi.Parameter('specialities', openapi.IN_QUERY, description="Comma-separated list of specialties to filter by.", type=openapi.TYPE_STRING),
+    #         openapi.Parameter('experience', openapi.IN_QUERY, description="Experience range(s) in the format 'min-max', e.g., '2-5,6-10'.", type=openapi.TYPE_STRING),
+    #         openapi.Parameter('rating', openapi.IN_QUERY, description="Comma-separated list of ratings to filter by.", type=openapi.TYPE_STRING),
+    #         openapi.Parameter('price_min', openapi.IN_QUERY, description="Minimum price filter.", type=openapi.TYPE_NUMBER),
+    #         openapi.Parameter('price_max', openapi.IN_QUERY, description="Maximum price filter.", type=openapi.TYPE_NUMBER),
+    #         openapi.Parameter('available', openapi.IN_QUERY, description="Filter by availability (true/false).", type=openapi.TYPE_BOOLEAN),
+    #     ],
+    #     responses={
+    #         200: TrainerSerializer(many=True),
+    #         400: openapi.Response('Bad Request'),
+    #         404: openapi.Response('Not Found'),
+    #     }
+    # )
+    def get_queryset(self):
+        queryset = Trainer.objects.all()
+        params = self.request.query_params
+        from django.db.models import Avg, F, ExpressionWrapper, Value,IntegerField
+        from django.db.models.functions import Floor,Ceil
+        queryset = queryset.annotate(
+    avg_rating=Avg('comments_received__rating')
+)
+
+        queryset = queryset.annotate(
+    ratingg=Floor('avg_rating')
+)
+        
+        search = params.get('search')
+        if search:
+            queryset = queryset.filter(
+                Q(user__name__icontains=search) |
+                Q(user__username__icontains=search) |
+                Q(user__first_name__icontains=search) |
+                Q(user__last_name__icontains=search)
+            )
+
+        # Filter by specialties
+        specialities = params.get('specialities')
+        if specialities:
+            speciality_list = [s.strip() for s in specialities.split(',')]
+            queryset = queryset.filter(specialties__name__in=speciality_list).distinct()
+
+        # Filter by experience
+        experience = params.get('experience')
+        if experience:
+            experience_ranges = [e.strip() for e in experience.split(',')]
+            experience_q = Q()
+            for exp_range in experience_ranges:
+                try:
+                    low, high = map(int, exp_range.split('-'))
+                    experience_q |= Q(experience__gte=low, experience__lte=high)
+                except ValueError:
+                    continue
+            queryset = queryset.filter(experience_q)
+
+        # Filter by rating
+        # print(queryset[0].__dict__)
+        rating = params.get('rating')
+        if rating:
+            print(rating,"777")
+            try:
+                rating_values = [float(r.strip()) for r in rating.split(',')]
+                queryset = queryset.filter(ratingg__in=rating_values)
+            except ValueError:
+                pass
+
+        # Filter by price minimum
+        price_min = params.get('price_min')
+        if price_min:
+            try:
+                queryset = queryset.filter(price__gte=float(price_min))
+            except ValueError:
+                pass
+
+        # Filter by price maximum
+        price_max = params.get('price_max')
+        if price_max:
+            try:
+                queryset = queryset.filter(price__lte=float(price_max))
+            except ValueError:
+                pass
+
+        # Filter by availability
+        available = params.get('available')
+        if available and available.lower() == 'true':
+            queryset = queryset.filter(isAvailableForReservation=True)
+
+        return queryset.distinct()
 
 
 class CommentCreateView(generics.CreateAPIView):

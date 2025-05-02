@@ -16,7 +16,12 @@ class TrainerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Trainer
-        fields = ["user", "email", "username", "first_name", "last_name", "phone_number", "profile_picture", "delete_profile_picture", "bio", "experience", "isAvailableForReservation", "price", "specialties", "certificates","rating"]
+        fields = [
+            "user", "email", "username", "first_name", "last_name", 
+            "phone_number", "profile_picture", "delete_profile_picture", 
+            "bio", "experience", "isAvailableForReservation", 
+            "price", "specialties", "certificates", "rating"
+        ]
 
     @swagger_serializer_method(serializer_or_field=serializers.DictField(
         child=serializers.CharField(),
@@ -31,9 +36,10 @@ class TrainerSerializer(serializers.ModelSerializer):
             "phone_number": obj.user.phone_number,
             "profile_picture": obj.user.profile_picture.url if obj.user.profile_picture else None,
         }
-    def get_rating(self, obj):
-        return obj.rating
 
+    def get_rating(self, obj):
+        # Here we get the annotated rating from the queryset, which was added in the view
+        return obj.rating if hasattr(obj, 'rating') else None
 class UpdateTrainerSerializer(serializers.ModelSerializer):
     # User fields
     first_name = serializers.CharField(
