@@ -37,8 +37,8 @@ class Command(BaseCommand):
             email = f"trainee{i+1}@example.com"
             password = username  # You might want to make this more secure
 
-            first_name=random.choice(["سیانور", "معین", "محمدمهدی", "نازنین", "علی", "حبیب", "ایمان", "کشکساناز", "گارفیلد", "داکتر"]),
-            last_name=random.choice(["چوب زاده", "ناشتا", "کله بامشی", "خی زاده", "زیانزاده", "قاشق فر", "قادیکلائی شهمیرزادی الاصل", "میرزاقاسمی دوست", "آدامس فر", "قندیل خور"]),
+            first_name=random.choice(["سیانور", "معین", "محمدمهدی", "نازنین", "علی", "حبیب", "ایمان", "هلیا", "فرزان", "داکتر"]),
+            last_name=random.choice(["ساختمان وار", "ناشتا", "بامشی", "خیارشور", "توت", "قاشق فر", "قادیکلائی شهمیرزادی الاصل", "میرزاقاسمی دوست", "آدامس فر", "مَک مَکِنا"]),
             name = f"{first_name} {last_name}"
 
             user = User.objects.create_user(
