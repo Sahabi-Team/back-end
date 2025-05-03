@@ -37,9 +37,9 @@ class Command(BaseCommand):
                 self.style.WARNING('No exercise images found in media/exercise_images/')
             )
         
-        exercise_tags = ['قوسی', 'دورانی', 'دراز', 'کوتاه']
-        muscle_groups = ['دست', 'پا', 'کمر', 'سینه', 'گردن']
-        equipments = ['دمبل', 'تردمیل', 'شیش', 'ساچمه', 'دوغ', 'گاوآهن']
+        exercise_tags = ['کششی', 'استقامتی', 'هوازی', 'قدرتی', 'فانکشنال']
+        muscle_groups = ['سرشانه', 'پا', 'شکم و پهلو', 'سینه', 'زیر بغل']
+        equipments = ['استپ', 'کش', 'شیش', 'هالتر', 'دمبل', 'نیمکت']
 
         # Create tags, muscle groups, and equipment if they don't exist
         for t in exercise_tags:

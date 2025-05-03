@@ -38,7 +38,7 @@ class Command(BaseCommand):
             password = username  # You might want to make this more secure
 
             first_name=random.choice(["سیانور", "معین", "محمدمهدی", "نازنین", "علی", "حبیب", "ایمان", "هلیا", "فرزان", "داکتر"]),
-            last_name=random.choice(["ساختمان وار", "ناشتا", "بامشی", "خیارشور", "توت", "قاشق فر", "قادیکلائی شهمیرزادی الاصل", "میرزاقاسمی دوست", "آدامس فر", "مَک مَکِنا"]),
+            last_name=random.choice(["ساختمان دار", "ناشتا", "بامشی", "خیارشور", "توت", "قاشق فر", "قادیکلائی شهمیرزادی الاصل", "میرزاقاسمی دوست", "آدامس فر", "مَک مَکِنا"]),
             name = f"{first_name} {last_name}"
 
             user = User.objects.create_user(
