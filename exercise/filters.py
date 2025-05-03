@@ -10,10 +10,10 @@ class CommaSeparatedListFilter(filters.BaseInFilter, filters.CharFilter):
         return super().filter(qs, value)
 class ExerciseFilter(filters.FilterSet):
     tags = CommaSeparatedListFilter(field_name='tags__name', lookup_expr='in')
-    muscle_group = CommaSeparatedListFilter(field_name='muscle_group', lookup_expr='in')
+    muscle_groups = CommaSeparatedListFilter(field_name='muscle_groups__name', lookup_expr='in')
     difficulty = CommaSeparatedListFilter(field_name='difficulty', lookup_expr='in')
-    equipment = CommaSeparatedListFilter(field_name='equipment', lookup_expr='in')
+    equipments = CommaSeparatedListFilter(field_name='equipments__name', lookup_expr='in')
 
     class Meta:
         model = Exercise
-        fields = ['tags', 'muscle_group', 'difficulty', 'equipment']
+        fields = ['tags', 'muscle_groups', 'difficulty', 'equipments']
