@@ -35,9 +35,9 @@ RUN python manage.py makemigrations authentication trainer_auth tests client_aut
 
 RUN python manage.py migrate
 
-RUN python manage.py add_exercise --count 10
+RUN python manage.py add_exercise --count 20
 
-RUN python manage.py add_user --count 10
+RUN python manage.py add_user --count 20
  
 # Expose the Django port
 EXPOSE 8000
