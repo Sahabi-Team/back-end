@@ -2,6 +2,9 @@ from django.core.management.base import BaseCommand
 from authentication.models import User
 from client_auth.models import Trainee
 from trainer_auth.models import Trainer
+from mentorship.models import Mentorship
+from tests.models import Test
+from notification.models import Notification
 import random
 import os
 from django.core.files import File
@@ -21,6 +24,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         count = options['count']
+        trainees = []
+        trainers = [] 
 
         profile_pictures_dir = os.path.join(settings.MEDIA_ROOT, 'profile_pictures')
         available_pictures = [f for f in os.listdir(profile_pictures_dir) 
@@ -61,7 +66,27 @@ class Command(BaseCommand):
                 height=random.uniform(150, 200),  # Random height between 150-200 cm
                 weight=random.uniform(50, 100)    # Random weight between 50-100 kg
             )
-
+            trainees.append(trainee)
+            test = Test.objects.create(
+                trainee=trainee,
+                birth_date= f"{random.randint(1990, 2005)}-{random.randint(1, 12)}-{random.randint(1, 28)}",
+                weight=random.uniform(50, 100),
+                height=random.uniform(150, 200),
+                goal_weight=random.uniform(50, 100),
+                goal=random.choice(["lose_weight", "gain_muscle", "stay_fit"]),
+                equipment=random.choice(["gym", "home", "outdoor"]),
+                workout_days=random.choice(["morning", "evening", "afternoon"]),
+                diseases=random.choice(["diabetes", "hypertension", "obesity", "none"]),
+                focus_area=random.choice(["arms", "legs", "core", "back", "chest", "full_body"]),
+                fitness_level=random.randint(1, 6)
+            )
+        
+        self.stdout.write(
+            self.style.SUCCESS(f'Successfully created {count} mock trainees')
+        )
+        self.stdout.write(
+            self.style.SUCCESS(f'Successfully created {count} mock tests')
+        )
 
         
         for i in range(count):
@@ -97,9 +122,22 @@ class Command(BaseCommand):
             trainer = Trainer.objects.create(
                 user=user
             )
-        
+            trainers.append(trainer)
+        self.stdout.write(
+            self.style.SUCCESS(f'Successfully created {count} mock trainers')
+        ) 
 
+        for i in range(int(len(trainees) * 3 / 4)):
+            m = Mentorship.objects.create(
+                trainee=trainees[i],
+                trainer=trainers[i]
+            )
+            Notification.objects.create(
+                user=trainers[i].user,
+                mentorship=m,
+                message=f"سلام معین این صرفا یه مسیجه تستیه میتونی از همونی که خودت نوشتی استفاده کنی"
+            ) 
 
         self.stdout.write(
-            self.style.SUCCESS(f'Successfully created {count} mock trainees & trainers')
-        ) 
+            self.style.SUCCESS(f'Successfully created {count} mock mentorships & notifications')
+        )
