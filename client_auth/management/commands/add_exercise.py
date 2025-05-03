@@ -66,9 +66,9 @@ class Command(BaseCommand):
             )
             
             # Add random tags, muscle groups, and equipment
-            exercise.tags.set(random.sample(list(ExerciseTag.objects.all()), random.randint(1, len(exercise_tags))))
-            exercise.muscle_groups.set(random.sample(list(MuscleGroup.objects.all()), random.randint(1, len(muscle_groups))))
-            exercise.equipments.set(random.sample(list(Equipment.objects.all()), random.randint(1, len(equipments))))
+            exercise.tags.set(random.sample(list(ExerciseTag.objects.all()), random.randint(1, int(len(exercise_tags)/2))))
+            exercise.muscle_groups.set(random.sample(list(MuscleGroup.objects.all()), random.randint(1, int(len(muscle_groups)/2))))
+            exercise.equipments.set(random.sample(list(Equipment.objects.all()), random.randint(1, int(len(equipments)/2))))
             
             # Add random images if available
             if available_pictures:
