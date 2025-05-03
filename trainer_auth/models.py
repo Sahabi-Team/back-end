@@ -5,7 +5,7 @@ from authentication.models import User
 class Trainer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='trainer_profile')
     bio = models.TextField(blank=True, default="")
-    experience = models.IntegerField(blank=True, default="")
+    experience = models.IntegerField(blank=True, default=0)
     isAvailableForReservation = models.BooleanField(default=True)
     price = models.FloatField(default=0.0)
     specialties = models.TextField(blank=True, default="")
