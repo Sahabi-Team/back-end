@@ -21,7 +21,7 @@ class Command(BaseCommand):
             '--count',
             type=int,
             default=50,
-            help='Number of mock trainees & trainers to create (default: 50)'
+            help='Number of mock trainers to create (default: 50)\ntrainees will be created as 6 times the number of trainers'
         )
 
     def handle(self, *args, **options):
