@@ -136,8 +136,19 @@ class TrainerTraineesView(APIView):
         trainer = request.user.trainer_profile 
         trainee_ids = Mentorship.objects.filter(trainer=trainer).values_list('trainee', flat=True).distinct()
         trainees = Trainee.objects.filter(id__in=trainee_ids)
-        serializer = TraineeSerializer(trainees, many=True)
-        return Response(serializer.data)
+        
+        # Get the status for each trainee
+        trainee_data = []
+        for trainee in trainees:
+            mentorship = Mentorship.objects.filter(trainer=trainer, trainee=trainee).first()
+            has_workout_plan = WorkoutPlan.objects.filter(mentorship=mentorship).exists()
+            status = 'تکمیل شده' if has_workout_plan else 'در انتظار'
+            
+            trainee_data.append({
+                'status': status
+            })
+            
+        return Response(trainee_data)
 
 
 class FilteredTrainerListView(generics.ListAPIView):
