@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from authentication.models import User
 from client_auth.models import Trainee
-from trainer_auth.models import Trainer
+from trainer_auth.models import Trainer, Comment
 from mentorship.models import Mentorship
 from tests.models import Test
 from notification.models import Notification
@@ -123,14 +123,35 @@ class Command(BaseCommand):
             
             # Create trainer profile
             trainer = Trainer.objects.create(
-                user=user
+                user=user,
+                price=random.uniform(100000, 1000000),
+                isAvailableForReservation=random.choice([True, False]),
+                experience=random.randint(1, 15),
+                specialties=random.choice(["قدرتی", "هوازی", "کششی", "استقامتی"]),
+                certificates=random.choice(["تربیت مدرس", "خواستگاه مغول", "زابل بابل", "یورک شایر"]),
+                bio=random.choice(["من یک تربیت مدرس هستم", "من یک خواستگاه مغول هستم", "من یک زابل بابل هستم", "من یک سرپرست یورک شایر هستم"]),
             )
             trainers.append(trainer)
+
         self.stdout.write(
             self.style.SUCCESS(f'Successfully created {count} mock trainers')
-        ) 
+        )
 
-        for i in range(int(len(trainees) * 3 / 4)):
+        for i in range(count * 6):
+            rating=random.randint(1,5) * 1.0 + random.randint(0,9) * 0.1
+            comment = "او عالی است حتما نصب کنید!" if rating > 2.5 else "او مرا به قتل رساند، خانواده من در حال طی کردن روند دادگستری برای شکایت از او هستند!"
+            Comment.objects.create(
+                trainee=trainees[random.randint(1,count)],
+                trainer=trainers[random.randint(1,count)],
+                rating=rating,
+                comment=comment
+            )
+        self.stdout.write(
+            self.style.SUCCESS(f'Successfully created {6 * count} reviews')
+        )
+
+
+        for i in range(int(count * 3 / 4)):
             m = Mentorship.objects.create(
                 trainee=trainees[i],
                 trainer=trainers[i]
@@ -151,8 +172,8 @@ class Command(BaseCommand):
                 )
 
         self.stdout.write(
-            self.style.SUCCESS(f'Successfully created {int(len(trainees) * 3 / 4)} mock mentorships & notifications')
+            self.style.SUCCESS(f'Successfully created {int(count * 3 / 4)} mock mentorships & notifications')
         )
         self.stdout.write(
-            self.style.SUCCESS(f'Successfully created {int(len(trainees) * 3 / 4)} mock workout plans & workout exercises')
+            self.style.SUCCESS(f'Successfully created {int(count * 3 / 4)} mock workout plans & workout exercises')
         )
