@@ -197,7 +197,7 @@ class FilteredTrainerListView(generics.ListAPIView):
             )
 
         # Filter by specialties
-        specialities = params.get('specialities')
+        specialities = params.get('specialties')
         if specialities:
             speciality_list = [s.strip() for s in specialities.split(',')]
             queryset = queryset.filter(specialties__in=speciality_list).distinct()
@@ -221,8 +221,8 @@ class FilteredTrainerListView(generics.ListAPIView):
         if rating:
             # print(rating,"777")
             try:
-                rating_values = [float(r.strip()) for r in rating.split(',')]
-                queryset = queryset.filter(ratingg__in=rating_values)
+                rating_values = min([float(r.strip()) for r in rating.split(',')])
+                queryset = queryset.filter(ratingg__gte=rating_values)
             except ValueError:
                 pass
 
