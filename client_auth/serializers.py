@@ -8,17 +8,21 @@ class TraineeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Trainee
-        fields = ["user", "height", "weight"]
+        fields = ["user", "height", "weight", "trainee_id"]
 
     def get_user(self, obj):
         """Fetch related user details"""
         return {
+            "id": obj.user.id,
             "name": obj.user.name,
             "email": obj.user.email,
             "username": obj.user.username,
             "phone_number": obj.user.phone_number,
             "profile_picture": obj.user.profile_picture.url if obj.user.profile_picture else None,
         }
+    
+    def get_trainee_id(self, obj):
+        return obj.id
 
 
 class UpdateTraineeSerializer(serializers.ModelSerializer):

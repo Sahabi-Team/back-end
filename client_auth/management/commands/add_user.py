@@ -33,14 +33,16 @@ class Command(BaseCommand):
         available_pictures = [f for f in os.listdir(profile_pictures_dir) 
                             if f.endswith(('.jpg', '.jpeg', '.png'))]
         
-        first_name=random.choice(["سیانور", "معین", "محمدمهدی", "نازنین", "علی", "حبیب", "ایمان", "هلیا", "فرزان", "داکتر"])
-        last_name=random.choice(["ساختمان دار", "اکبری", "داستان دوست", "کیبوردی", "موفاسا", "قاشق فر", "قادیکلائی شهمیرزادی الاصل", "میرزاقاسمی دوست", "آدامس فر", "مَک مَکِنا"])
+        first_names=["سیانور", "معین", "محمدمهدی", "نازنین", "علی", "حبیب", "ایمان", "هلیا", "فرزان", "داکتر"]
+        last_names=["ساختمان دار", "اکبری", "داستان دوست", "کیبوردی", "موفاسا", "قاشق فر", "قادیکلائی شهمیرزادی الاصل", "میرزاقاسمی دوست", "آدامس فر", "مَک مَکِنا"]
         
         for i in range(count):
             # Create a user
             username = f"trainee{i+1}"
             email = f"trainee{i+1}@example.com"
             password = username  # You might want to make this more secure
+            first_name = random.choice(first_names)
+            last_name = random.choice(last_names)
             name = f"{first_name} {last_name}"
 
             user = User.objects.create_user(
@@ -96,6 +98,8 @@ class Command(BaseCommand):
             username = f"trainer{i+1}"
             email = f"trainer{i+1}@example.com"
             password = username  # You might want to make this more secure
+            first_name = random.choice(first_names)
+            last_name = random.choice(last_names)
             name = f"{first_name} {last_name}"
 
             user = User.objects.create_user(

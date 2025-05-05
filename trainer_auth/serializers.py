@@ -13,11 +13,12 @@ class TrainerSerializer(serializers.ModelSerializer):
     delete_profile_picture = serializers.BooleanField(required=False, write_only=True)
     rating = serializers.SerializerMethodField()
     user = serializers.SerializerMethodField()
+    trainer_id = serializers.SerializerMethodField()
 
     class Meta:
         model = Trainer
         fields = [
-            "user", "email", "username", "first_name", "last_name", 
+            "user", "trainer_id", "email", "username", "first_name", "last_name", 
             "phone_number", "profile_picture", "delete_profile_picture", 
             "bio", "experience", "isAvailableForReservation", 
             "price", "specialties", "certificates", "rating"
@@ -29,6 +30,7 @@ class TrainerSerializer(serializers.ModelSerializer):
     ))
     def get_user(self, obj):
         return {
+            "id": obj.user.id,
             "name": obj.user.name,
             "first_name": obj.user.first_name,
             "last_name": obj.user.last_name,
@@ -37,6 +39,9 @@ class TrainerSerializer(serializers.ModelSerializer):
             "phone_number": obj.user.phone_number,
             "profile_picture": obj.user.profile_picture.url if obj.user.profile_picture else None,
         }
+    
+    def get_trainer_id(self, obj):
+        return obj.id
 
     def get_rating(self, obj):
         # Here we get the annotated rating from the queryset, which was added in the view

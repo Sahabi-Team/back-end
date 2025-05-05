@@ -25,7 +25,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the Django project to the container
 COPY . /app/
 
-RUN rm db.sqlite3
+RUN rm -f db.sqlite3
 
 RUN rm -rf */migrations
 
