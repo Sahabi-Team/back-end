@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from .models import Trainee
 from authentication.models import User
+from sahabi.settings import PRODUCTION_DOMAIN
 
 class TraineeSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
@@ -19,7 +20,7 @@ class TraineeSerializer(serializers.ModelSerializer):
             "email": obj.user.email,
             "username": obj.user.username,
             "phone_number": obj.user.phone_number,
-            "profile_picture": obj.user.profile_picture.url if obj.user.profile_picture else None,
+            "profile_picture": f"{PRODUCTION_DOMAIN}{obj.user.profile_picture.url}" if obj.user.profile_picture else None,
         }
     
     def get_trainee_id(self, obj):

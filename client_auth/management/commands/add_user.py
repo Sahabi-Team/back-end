@@ -21,7 +21,7 @@ class Command(BaseCommand):
             '--count',
             type=int,
             default=50,
-            help='Number of mock trainers to create (default: 50)\ntrainees will be created as 6 times the number of trainers'
+            help='Number of mock trainers & trainees to create (default: 50)'
         )
 
     def handle(self, *args, **options):
@@ -147,33 +147,35 @@ class Command(BaseCommand):
                 comment=comment
             )
         self.stdout.write(
-            self.style.SUCCESS(f'Successfully created {6 * count} reviews')
+            self.style.SUCCESS(f'Successfully created {count} reviews')
         )
 
 
-        for i in range(int(count * 3 / 4)):
-            m = Mentorship.objects.create(
-                trainee=trainees[i],
-                trainer=trainers[i]
-            )
-            w = WorkoutPlan.objects.create(
-                mentorship=m,
-                name=f"workout{i+1}",
-                description=f"از برنامت لذت ببر!",
-                status=random.choice(["تمام شده", "در حال انجام", "شروع نشده"])
-            )
-            for j in range(random.randint(1, 5)):
-                WorkoutExercise.objects.create(
-                    workout_plan=w,
-                    exercise=Exercise.objects.get(id=random.randint(1, int(Exercise.objects.count() * 0.8))),
-                    sets=random.randint(1, 5),
-                    reps=random.randint(1, 10),
-                    order=j
+        for i in range(count):
+            for apprentice in range(6):
+                m = Mentorship.objects.create(
+                    trainee=trainees[(i + apprentice) % count],
+                    trainer=trainers[i]
                 )
+                if random.randint(0, 1) == 1:
+                    w = WorkoutPlan.objects.create(
+                        mentorship=m,
+                        name=f"workout{i+1}",
+                        description=f"از برنامت لذت ببر!",
+                        status=random.choice(["تمام شده", "در حال انجام", "شروع نشده"])
+                    )
+                    for j in range(random.randint(1, 5)):
+                        WorkoutExercise.objects.create(
+                            workout_plan=w,
+                            exercise=Exercise.objects.get(id=random.randint(1, int(Exercise.objects.count() * 0.8))),
+                            sets=random.randint(1, 5),
+                            reps=random.randint(1, 10),
+                            order=j
+                        )
 
         self.stdout.write(
-            self.style.SUCCESS(f'Successfully created {int(count * 3 / 4)} mock mentorships & notifications')
+            self.style.SUCCESS(f'Successfully created {6 * count} mock mentorships & notifications')
         )
         self.stdout.write(
-            self.style.SUCCESS(f'Successfully created {int(count * 3 / 4)} mock workout plans & workout exercises')
+            self.style.SUCCESS(f'Successfully created mock workout plans & workout exercises')
         )
