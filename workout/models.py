@@ -14,10 +14,16 @@ class WorkoutPlan(models.Model):
         null=True,  # Allow null temporarily for migration
         blank=True  # Allow blank temporarily for migration
     )
+    STATUS_CHOICES = [
+        ('تمام شده', 'تمام شده'),
+        ('شروع نشده', 'شروع نشده'),
+        ('در حال انجام', 'در حال انجام'),
+    ]
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    status = models.CharField(max_length=255, default='در حال انجام', choices=STATUS_CHOICES)
 
     def __str__(self):
         return f"{self.name} - {self.mentorship}"
