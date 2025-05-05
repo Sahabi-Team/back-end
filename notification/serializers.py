@@ -3,13 +3,18 @@ from .models import Notification
 from authentication.models import User
 from django.utils import timezone
 from datetime import timedelta
+from django.conf import settings
 
 class TraineeInfoSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(source='id')
+    profile_picture = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = ['user_id', 'name', 'profile_picture']
+
+    def get_profile_picture(self, obj):
+        return f"{settings.PRODUCTION_DOMAIN}{obj.profile_picture.url}"
 
 class NotificationSerializer(serializers.ModelSerializer):
     trainee_info = serializers.SerializerMethodField()
@@ -17,8 +22,8 @@ class NotificationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Notification
-        fields = ['user', 'mentorship', 'message', 'is_read', 'created_at', 'read_at', 'trainee_info']
-        read_only_fields = ['created_at', 'read_at']
+        fields = ['id', 'user', 'mentorship', 'message', 'is_read', 'created_at', 'read_at', 'trainee_info']
+        read_only_fields = ['id', 'created_at', 'read_at']
 
     def get_trainee_info(self, obj):
         trainee = obj.mentorship.trainee.user

@@ -34,7 +34,7 @@ class Command(BaseCommand):
                             if f.endswith(('.jpg', '.jpeg', '.png'))]
         
         first_name=random.choice(["سیانور", "معین", "محمدمهدی", "نازنین", "علی", "حبیب", "ایمان", "هلیا", "فرزان", "داکتر"])
-        last_name=random.choice(["ساختمان دار", "ناشتا", "بامشی", "خیارشور", "توت", "قاشق فر", "قادیکلائی شهمیرزادی الاصل", "میرزاقاسمی دوست", "آدامس فر", "مَک مَکِنا"])
+        last_name=random.choice(["ساختمان دار", "اکبری", "داستان دوست", "کیبوردی", "موفاسا", "قاشق فر", "قادیکلائی شهمیرزادی الاصل", "میرزاقاسمی دوست", "آدامس فر", "مَک مَکِنا"])
         
         for i in range(count):
             # Create a user
@@ -131,11 +131,6 @@ class Command(BaseCommand):
                 trainee=trainees[i],
                 trainer=trainers[i]
             )
-            Notification.objects.create(
-                user=trainers[i].user,
-                mentorship=m,
-                message=f"سلام معین این صرفا یه مسیجه تستیه میتونی از همونی که خودت نوشتی استفاده کنی"
-            ) 
             w = WorkoutPlan.objects.create(
                 mentorship=m,
                 name=f"workout{i+1}",
