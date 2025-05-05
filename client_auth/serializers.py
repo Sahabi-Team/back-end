@@ -5,6 +5,7 @@ from authentication.models import User
 
 class TraineeSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
+    trainee_id = serializers.SerializerMethodField()
 
     class Meta:
         model = Trainee
