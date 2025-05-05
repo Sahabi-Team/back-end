@@ -1,29 +1,40 @@
 from rest_framework import serializers
 from .models import Exercise, ExerciseImage, ExerciseTag, MuscleGroup, Equipment
+from django.conf import settings
+
+
+class ProductionImageField(serializers.ImageField):
+    def to_representation(self, value):
+        if not value:
+            return None
+        url = value.url
+        return f"{settings.PRODUCTION_DOMAIN}{url}"
 
 
 class ExerciseImageSerializer(serializers.ModelSerializer):
+    image = ProductionImageField()
+
     class Meta:
         model = ExerciseImage
-        fields = ['id', 'image']
+        fields = ['image']
 
 
 class ExerciseTagSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExerciseTag
-        fields = ['id', 'name']
+        fields = ['name']
 
 
 class MuscleGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = MuscleGroup
-        fields = ['id', 'name']
+        fields = ['name']
 
 
 class EquipmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Equipment
-        fields = ['id', 'name']
+        fields = ['name']
 
 
 class ExerciseSerializer(serializers.ModelSerializer):

@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'opinions',
     'mentorship',
-    
+    'notification',
 ]
 
 AUTH_USER_MODEL = 'authentication.User'
@@ -127,8 +127,12 @@ DATABASES = {
     }
 }
 
+# Media files configuration
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Production domain configuration
+PRODUCTION_DOMAIN = 'http://84.234.29.28:8000'  # Replace with your actual production domain
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')

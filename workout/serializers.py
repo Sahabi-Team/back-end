@@ -9,7 +9,6 @@ class WorkoutExerciseSerializer(serializers.ModelSerializer):
     This serializer handles the creation and retrieval of exercises within a workout plan.
     It includes the exercise details, sets, reps, duration, and description.
     """
-    exercise = ExerciseSerializer(read_only=True)
     exercise_id = serializers.IntegerField(
         write_only=True,
         help_text="ID of the exercise to be added to the workout plan"
@@ -22,7 +21,7 @@ class WorkoutExerciseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WorkoutExercise
-        fields = ['id', 'exercise', 'exercise_id', 'workout_plan_id', 'sets', 'reps', 'duration', 'description', 'order']
+        fields = ['id', 'exercise_id', 'workout_plan_id', 'sets', 'reps', 'duration', 'description', 'order']
         read_only_fields = ['id']
         extra_kwargs = {
             'sets': {'help_text': 'Number of sets for this exercise'},
