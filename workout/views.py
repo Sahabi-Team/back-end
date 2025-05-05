@@ -119,7 +119,7 @@ class WorkoutExerciseViewSet(viewsets.ModelViewSet):
         ).select_related('workout_plan', 'workout_plan__mentorship', 'exercise')
 
     def perform_create(self, serializer):
-        workout_plan_id = self.request.data.get('workout_plan')
+        workout_plan_id = self.request.data.get('workout_plan_id')
         exercise_id = self.request.data.get('exercise_id')
         
         try:

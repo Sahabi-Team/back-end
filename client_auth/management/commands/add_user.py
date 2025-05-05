@@ -5,6 +5,8 @@ from trainer_auth.models import Trainer
 from mentorship.models import Mentorship
 from tests.models import Test
 from notification.models import Notification
+from workout.models import WorkoutPlan, WorkoutExercise
+from exercise.models import Exercise
 import random
 import os
 from django.core.files import File
@@ -31,14 +33,14 @@ class Command(BaseCommand):
         available_pictures = [f for f in os.listdir(profile_pictures_dir) 
                             if f.endswith(('.jpg', '.jpeg', '.png'))]
         
+        first_name=random.choice(["سیانور", "معین", "محمدمهدی", "نازنین", "علی", "حبیب", "ایمان", "هلیا", "فرزان", "داکتر"])
+        last_name=random.choice(["ساختمان دار", "ناشتا", "بامشی", "خیارشور", "توت", "قاشق فر", "قادیکلائی شهمیرزادی الاصل", "میرزاقاسمی دوست", "آدامس فر", "مَک مَکِنا"])
+        
         for i in range(count):
             # Create a user
             username = f"trainee{i+1}"
             email = f"trainee{i+1}@example.com"
             password = username  # You might want to make this more secure
-
-            first_name=random.choice(["سیانور", "معین", "محمدمهدی", "نازنین", "علی", "حبیب", "ایمان", "هلیا", "فرزان", "داکتر"]),
-            last_name=random.choice(["ساختمان دار", "ناشتا", "بامشی", "خیارشور", "توت", "قاشق فر", "قادیکلائی شهمیرزادی الاصل", "میرزاقاسمی دوست", "آدامس فر", "مَک مَکِنا"]),
             name = f"{first_name} {last_name}"
 
             user = User.objects.create_user(
@@ -94,9 +96,6 @@ class Command(BaseCommand):
             username = f"trainer{i+1}"
             email = f"trainer{i+1}@example.com"
             password = username  # You might want to make this more secure
-
-            first_name=random.choice(["سیانور", "معین", "محمدمهدی", "نازنین", "علی", "حبیب", "ایمان", "محمدحسین", "گارفیلد", "داکتر"]),
-            last_name=random.choice(["چوب زاده", "ناشتا", "کله بامشی", "خی زاده", "زیانزاده", "قاشق فر", "قادیکلائی شهمیرزادی الاصل", "میرزاقاسمی دوست", "آدامس فر", "قندیل خور"]),
             name = f"{first_name} {last_name}"
 
             user = User.objects.create_user(
@@ -137,7 +136,24 @@ class Command(BaseCommand):
                 mentorship=m,
                 message=f"سلام معین این صرفا یه مسیجه تستیه میتونی از همونی که خودت نوشتی استفاده کنی"
             ) 
+            w = WorkoutPlan.objects.create(
+                mentorship=m,
+                name=f"workout{i+1}",
+                description=f"از برنامت لذت ببر!",
+                status=random.choice(["تمام شده", "در حال انجام", "شروع نشده"])
+            )
+            for j in range(random.randint(1, 5)):
+                WorkoutExercise.objects.create(
+                    workout_plan=w,
+                    exercise=Exercise.objects.get(id=random.randint(1, int(Exercise.objects.count() * 0.8))),
+                    sets=random.randint(1, 5),
+                    reps=random.randint(1, 10),
+                    order=j
+                )
 
         self.stdout.write(
-            self.style.SUCCESS(f'Successfully created {count} mock mentorships & notifications')
+            self.style.SUCCESS(f'Successfully created {int(len(trainees) * 3 / 4)} mock mentorships & notifications')
+        )
+        self.stdout.write(
+            self.style.SUCCESS(f'Successfully created {int(len(trainees) * 3 / 4)} mock workout plans & workout exercises')
         )
