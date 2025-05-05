@@ -141,8 +141,8 @@ class Command(BaseCommand):
             rating=random.randint(1,5) * 1.0 + random.randint(0,9) * 0.1
             comment = "او عالی است حتما نصب کنید!" if rating > 2.5 else "او مرا به قتل رساند، خانواده من در حال طی کردن روند دادگستری برای شکایت از او هستند!"
             Comment.objects.create(
-                trainee=trainees[random.randint(1,count)],
-                trainer=trainers[random.randint(1,count)],
+                trainee=trainees[random.randint(1,count)-1],
+                trainer=trainers[random.randint(1,count)-1],
                 rating=rating,
                 comment=comment
             )
