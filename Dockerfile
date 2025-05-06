@@ -38,6 +38,8 @@ RUN python manage.py migrate
 RUN python manage.py add_exercise --count 20
 
 RUN python manage.py add_user --count 20
+
+RUN python manage.py collectstatic
  
 # Expose the Django port
 EXPOSE 8000
