@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Trainer, Comment
 from authentication.models import User
 from drf_yasg.utils import swagger_serializer_method
+from sahabi.settings import PRODUCTION_DOMAIN
 
 class TrainerSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(required=False)
@@ -37,7 +38,7 @@ class TrainerSerializer(serializers.ModelSerializer):
             "email": obj.user.email,
             "username": obj.user.username,
             "phone_number": obj.user.phone_number,
-            "profile_picture": obj.user.profile_picture.url if obj.user.profile_picture else None,
+            "profile_picture": f"{PRODUCTION_DOMAIN}{obj.user.profile_picture.url}" if obj.user.profile_picture else None,
         }
     
     def get_trainer_id(self, obj):
