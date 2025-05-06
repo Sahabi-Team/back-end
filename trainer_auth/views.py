@@ -180,9 +180,9 @@ class FilteredTrainerListView(generics.ListAPIView):
         queryset = Trainer.objects.all()
         params = self.request.query_params
         from django.db.models import Avg, F, ExpressionWrapper, Value,IntegerField
-        from django.db.models.functions import Floor,Ceil
+        from django.db.models.functions import Floor,Round
         queryset = queryset.annotate(
-            avg_rating=Avg('comments_received__rating')
+            avg_rating=Round(Avg('comments_received__rating'), 1)
         )
 
         queryset = queryset.annotate(
