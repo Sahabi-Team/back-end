@@ -154,8 +154,9 @@ class FilteredTrainerListView(generics.ListAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = TrainerSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
-    ordering_fields = ['experience', 'avg_rating']
+    ordering_fields = ['experience', 'avg_rating', 'isAvailableForReservation']
     search_fields = ['user__name', 'user__username', 'user__first_name', 'user__last_name']
+    ordering = ['-isAvailableForReservation']  # Default ordering: available trainers first
 
     @swagger_auto_schema(
         operation_description="Retrieve a list of trainers filtered by various parameters.",
@@ -167,6 +168,7 @@ class FilteredTrainerListView(generics.ListAPIView):
             openapi.Parameter('price_min', openapi.IN_QUERY, description="Minimum price filter.", type=openapi.TYPE_NUMBER),
             openapi.Parameter('price_max', openapi.IN_QUERY, description="Maximum price filter.", type=openapi.TYPE_NUMBER),
             openapi.Parameter('available', openapi.IN_QUERY, description="Filter by availability (true/false).", type=openapi.TYPE_BOOLEAN),
+            openapi.Parameter('ordering', openapi.IN_QUERY, description="Order by field(s). Prefix with '-' for descending order. Available fields: experience, avg_rating, isAvailableForReservation", type=openapi.TYPE_STRING),
         ],
         responses={
             200: TrainerSerializer(many=True),
@@ -180,12 +182,12 @@ class FilteredTrainerListView(generics.ListAPIView):
         from django.db.models import Avg, F, ExpressionWrapper, Value,IntegerField
         from django.db.models.functions import Floor,Ceil
         queryset = queryset.annotate(
-    avg_rating=Avg('comments_received__rating')
-)
+            avg_rating=Avg('comments_received__rating')
+        )
 
         queryset = queryset.annotate(
-    ratingg=Floor('avg_rating')
-)
+            ratingg=Floor('avg_rating')
+        )
         
         search = params.get('search')
         if search:
