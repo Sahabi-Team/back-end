@@ -17,7 +17,7 @@ class Trainer(models.Model):
     @property
     def rating(self):
         from math import ceil
-        return (self.comments_received.aggregate(avg_rating=models.Avg('rating'))['avg_rating'] or 0.0)
+        return round(self.comments_received.aggregate(avg_rating=models.Avg('rating'))['avg_rating'] or 0.0,1)
 
 
 
