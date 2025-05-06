@@ -124,7 +124,7 @@ class Command(BaseCommand):
             # Create trainer profile
             trainer = Trainer.objects.create(
                 user=user,
-                price=random.uniform(100000, 1000000),
+                price=random.randint(100, 999),
                 isAvailableForReservation=random.choice([True, False]),
                 experience=random.randint(1, 15),
                 specialties=random.choice(["قدرتی", "هوازی", "کششی", "استقامتی"]),
@@ -136,26 +136,19 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.SUCCESS(f'Successfully created {count} mock trainers')
         )
-
-        for i in range(count):
-            rating=random.randint(1,5) * 1.0 + random.randint(0,9) * 0.1
-            comment = "او عالی است حتما نصب کنید!" if rating > 2.5 else "او مرا به قتل رساند، خانواده من در حال طی کردن روند دادگستری برای شکایت از او هستند!"
-            Comment.objects.create(
-                trainee=trainees[i],
-                trainer=trainers[i],
-                rating=rating,
-                comment=comment
-            )
-        self.stdout.write(
-            self.style.SUCCESS(f'Successfully created {count} reviews')
-        )
-
-
         for i in range(count):
             for apprentice in range(6):
                 m = Mentorship.objects.create(
                     trainee=trainees[(i + apprentice) % count],
                     trainer=trainers[i]
+                )
+                rating=random.randint(1,5) * 1.0 + random.randint(0,9) * 0.1
+                comment = "او عالی است حتما نصب کنید!" if rating > 2.5 else "او مرا به قتل رساند، خانواده من در حال طی کردن روند دادگستری برای شکایت از او هستند!"
+                Comment.objects.create(
+                    trainee=trainees[(i + apprentice) % count],
+                    trainer=trainers[i],
+                    rating=rating,
+                    comment=comment
                 )
                 if random.randint(0, 1) == 1:
                     w = WorkoutPlan.objects.create(
@@ -173,6 +166,9 @@ class Command(BaseCommand):
                             order=j
                         )
 
+        self.stdout.write(
+            self.style.SUCCESS(f'Successfully created {count} reviews')
+        )
         self.stdout.write(
             self.style.SUCCESS(f'Successfully created {6 * count} mock mentorships & notifications')
         )
