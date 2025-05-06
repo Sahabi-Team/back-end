@@ -10,8 +10,13 @@ from .utils import password_reset_token
 from rest_framework.exceptions import ValidationError
 from client_auth.models import Trainee
 from trainer_auth.models import Trainer
-
+from sahabi.settings import PRODUCTION_DOMAIN
 class UserSerializer(serializers.ModelSerializer):
+    profile_picture = serializers.SerializerMethodField()
+
+    def get_profile_picture(self, obj):
+        return f"{PRODUCTION_DOMAIN}{obj.profile_picture.url}" if obj.profile_picture else None
+
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'phone_number', 'profile_picture')
