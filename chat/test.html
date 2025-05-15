@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JWT WebSocket Chat Test</title>
+</head>
+<body>
+    <h2>JWT Authenticated Chat</h2>
+
+    <div>
+        <label>Room ID: <input id="room-id" value="2" /></label><br>
+        <label>JWT Token: <input id="jwt-token" size="80" placeholder="Paste your JWT token here..." /></label><br>
+        <button onclick="connect()">Connect</button>
+    </div>
+
+    <hr>
+
+    <div id="chat-container" style="display:none;">
+        <div id="chat-log" style="border:1px solid #ccc; padding:10px; height:200px; overflow-y:scroll;"></div>
+        <input id="chat-message-input" type="text" size="80" placeholder="Type your message..." />
+        <button id="chat-message-submit">Send</button>
+    </div>
+
+    <script>
+        let chatSocket = null;
+
+        function connect() {
+            const roomId = document.getElementById('room-id').value;
+            const token = document.getElementById('jwt-token').value;
+
+            const wsProtocol = 'ws';
+            const wsUrl = `${wsProtocol}://localhost:8000/ws/chat/${roomId}/?token=${token}`;
+
+            chatSocket = new WebSocket(wsUrl);
+
+            chatSocket.onopen = function() {
+                document.getElementById('chat-container').style.display = 'block';
+                console.log("WebSocket connected.");
+            };
+
+            chatSocket.onmessage = function(e) {
+                const data = JSON.parse(e.data);
+                const log = document.getElementById('chat-log');
+                log.innerHTML += `<p><strong>${data.sender}</strong>: ${data.message} <em>${data.timestamp}</em></p>`;
+                log.scrollTop = log.scrollHeight;
+            };
+
+            chatSocket.onclose = function() {
+                alert('WebSocket disconnected.');
+            };
+
+            document.getElementById('chat-message-submit').onclick = function() {
+                const input = document.getElementById('chat-message-input');
+                const message = input.value;
+                if (message.trim()) {
+                    chatSocket.send(JSON.stringify({ message }));
+                    input.value = '';
+                }
+            };
+
+            document.getElementById('chat-message-input').onkeyup = function(e) {
+                if (e.keyCode === 13) {
+                    document.getElementById('chat-message-submit').click();
+                }
+            };
+        }
+    </script>
+</body>
+</html>
