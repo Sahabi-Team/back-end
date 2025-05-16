@@ -8,7 +8,8 @@ from .views import (
     CommentListView,
     CommentDetailView,
     GetTrainerIdByUsername,
-    GetTrainerUsernameById
+    GetTrainerUsernameById,
+    TrainerPublicProfileView
 )
 
 urlpatterns = [
@@ -21,5 +22,6 @@ urlpatterns = [
     path("comments/detail/<int:pk>/", CommentDetailView.as_view(), name="comment_detail"),
     path('trainer-id/<str:username>/', GetTrainerIdByUsername.as_view(), name='get-trainer-id-by-username'),
     path('trainer-username/<int:trainer_id>/', GetTrainerUsernameById.as_view(), name='get-trainer-username-by-id'),
+    path('trainers/<int:trainer_id>/profile/', TrainerPublicProfileView.as_view(), name='trainer-public-profile'),
 
 ]

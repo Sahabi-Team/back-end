@@ -138,18 +138,48 @@ class UpdateTrainerSerializer(serializers.ModelSerializer):
 
 
 class TrainerPublicProfileSerializer(serializers.ModelSerializer):
-    first_name = serializers.CharField(source='user.first_name')
-    last_name = serializers.CharField(source='trainer.last_name')
-    email = serializers.EmailField(source='user.email')
-    profile_picture = serializers.ImageField(source='user.profile_picture')
+    first_name = serializers.CharField(required=False)
+    last_name = serializers.CharField(required=False)
+    email = serializers.EmailField(required=False)
+    username = serializers.CharField(required=False)
+    # phone_number = serializers.CharField(required=False, allow_blank=True)
+    profile_picture = serializers.ImageField(required=False, allow_null=True)
+    delete_profile_picture = serializers.BooleanField(required=False, write_only=True)
     rating = serializers.SerializerMethodField()
+    user = serializers.SerializerMethodField()
+    trainer_id = serializers.SerializerMethodField()
 
     class Meta:
         model = Trainer
-        fields = ['first_name', 'last_name', 'email', 'profile_picture', 'rating']
+        fields = [
+            "user", "trainer_id", "email", "username", "first_name", "last_name", 
+            "profile_picture", "delete_profile_picture", 
+            "bio", "experience", "isAvailableForReservation", 
+            "price", "specialties", "certificates", "rating"
+        ]
+
+    @swagger_serializer_method(serializer_or_field=serializers.DictField(
+        child=serializers.CharField(),
+        help_text="User details including name, email, username, phone number, and profile picture URL"
+    ))
+    def get_user(self, obj):
+        return {
+            "id": obj.user.id,
+            "name": obj.user.name,
+            "first_name": obj.user.first_name,
+            "last_name": obj.user.last_name,
+            "email": obj.user.email,
+            "username": obj.user.username,
+            # "phone_number": obj.user.phone_number,
+            "profile_picture": f"{PRODUCTION_DOMAIN}{obj.user.profile_picture.url}" if obj.user.profile_picture else None,
+        }
+    
+    def get_trainer_id(self, obj):
+        return obj.id
 
     def get_rating(self, obj):
-        return obj.rating
+        # Here we get the annotated rating from the queryset, which was added in the view
+        return obj.rating if hasattr(obj, 'rating') else None
 
 
 class CommentSerializer(serializers.ModelSerializer):

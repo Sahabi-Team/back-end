@@ -291,3 +291,15 @@ class GetTrainerUsernameById(APIView):
         trainer = get_object_or_404(Trainer, id=trainer_id)
         username = trainer.user.username
         return Response({'username': username}, status=status.HTTP_200_OK)
+class TrainerPublicProfileView(APIView):
+    authentication_classes = []  # No authentication
+    permission_classes = []      # No permission checks
+
+    def get(self, request, trainer_id):
+        try:
+            trainer = Trainer.objects.get(id=trainer_id)
+        except Trainer.DoesNotExist:
+            return Response({'error': 'Trainer not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = TrainerPublicProfileSerializer(trainer)
+        return Response(serializer.data, status=status.HTTP_200_OK)
