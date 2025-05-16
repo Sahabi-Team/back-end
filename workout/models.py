@@ -29,17 +29,14 @@ class WorkoutPlan(models.Model):
         return f"{self.name} - {self.mentorship}"
 
 class WorkoutExercise(models.Model):
-    """
-    Model representing an exercise within a workout plan.
-    Each workout exercise belongs to a workout plan and references an exercise.
-    """
     workout_plan = models.ForeignKey(WorkoutPlan, on_delete=models.CASCADE, related_name='exercises')
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
     sets = models.PositiveIntegerField()
-    reps = models.PositiveIntegerField(null=True, blank=True)  # Null if duration is used
-    duration = models.PositiveIntegerField(null=True, blank=True)  # Duration in seconds, null if reps is used
+    reps = models.PositiveIntegerField(null=True, blank=True)
+    duration = models.PositiveIntegerField(null=True, blank=True)
     description = models.TextField(blank=True)
-    order = models.PositiveIntegerField(default=0)  # To maintain exercise order in the workout
+    order = models.PositiveIntegerField(default=0)
+    day = models.PositiveIntegerField(help_text="Day number of the workout plan this exercise is scheduled for", default=1)  # ✅ New field
 
     class Meta:
         ordering = ['order']
