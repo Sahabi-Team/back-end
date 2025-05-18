@@ -33,7 +33,10 @@ ALLOWED_HOSTS = ['ighader.pythonanywhere.com','localhost','127.0.0.1', '84.234.2
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+    'chat',
     'corsheaders',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -55,7 +58,7 @@ INSTALLED_APPS = [
     'opinions',
     'mentorship',
     'notification',
-]
+]    
 
 AUTH_USER_MODEL = 'authentication.User'
 
@@ -69,7 +72,12 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
-
+ASGI_APPLICATION = 'sahabi.asgi.application'  # ← replace with your actual project name
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 MIDDLEWARE = [
     'sahabi.middleware.CustomCORSHeadersMiddleware',
     'corsheaders.middleware.CorsMiddleware',  # should be first
@@ -112,6 +120,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'sahabi.wsgi.application'
+
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
