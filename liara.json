@@ -14,5 +14,5 @@
     "command": "python manage.py runserver"
   },
   "disks": []
-  
+
 }
