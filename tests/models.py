@@ -6,6 +6,15 @@ class Test(models.Model):
     """Model to store fitness test details for a Trainee"""
     trainee = models.ForeignKey(Trainee, on_delete=models.CASCADE, related_name="tests")
     birth_date = models.DateField(help_text="Trainee's date of birth")
+    
+    GENDER_CHOICES = [
+        ('male', 'Male'),
+        ('female', 'Female'),
+        ('other', 'Other'),
+    ]
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, help_text="Trainee's gender")
+    body_form = models.FloatField(help_text="Body form score (non-negative number)", validators=[MinValueValidator(0)])
+    
     weight = models.FloatField(help_text="Current weight in kg")
     height = models.FloatField(help_text="Height in cm")
     goal_weight = models.FloatField(help_text="Target weight in kg", null=True, blank=True)

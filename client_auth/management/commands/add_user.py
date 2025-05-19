@@ -73,6 +73,8 @@ class Command(BaseCommand):
             trainees.append(trainee)
             test = Test.objects.create(
                 trainee=trainee,
+                gender=random.choice(["male", "female", "other"]),
+                body_form=random.randint(0, 10),
                 birth_date= f"{random.randint(1990, 2005)}-{random.randint(1, 12)}-{random.randint(1, 28)}",
                 weight=random.uniform(50, 100),
                 height=random.uniform(150, 200),
