@@ -87,18 +87,25 @@ class PasswordResetRequestSerializer(serializers.Serializer):
         )
 
 class PasswordResetSerializer(serializers.Serializer):
-    email = serializers.EmailField()
     new_password = serializers.CharField(write_only=True)
-    token = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)
 
     def validate(self, data):
-        """Validate the token and email combination"""
-        try:
-            user = User.objects.get(email=data['email'])
-        except User.DoesNotExist:
-            raise ValidationError("Invalid email address.")
+        """Validate the token and extract user"""
+        if data['new_password'] != data['confirm_password']:
+            raise ValidationError("The new passwords do not match.")
 
-        if not password_reset_token.check_token(user, data['token']):
+        # Get the token from context
+        token = self.context.get('token')
+        if not token:
+            raise ValidationError("Token is required.")
+
+        # Try to find a user that matches this token
+        for user in User.objects.all():
+            if password_reset_token.check_token(user, token):
+                self.user = user
+                break
+        else:
             raise ValidationError("Invalid or expired token.")
 
         # Validate the new password
@@ -111,9 +118,8 @@ class PasswordResetSerializer(serializers.Serializer):
 
     def save(self):
         """Reset the user's password"""
-        user = User.objects.get(email=self.validated_data['email'])
-        user.set_password(self.validated_data['new_password'])
-        user.save()
+        self.user.set_password(self.validated_data['new_password'])
+        self.user.save()
 
 class ProfilePictureSerializer(serializers.Serializer):
     profile_picture = serializers.ImageField()

@@ -152,7 +152,7 @@ class PasswordResetConfirmView(APIView):
         responses={200: "Password reset successful!", 400: "Token invalid or expired"}
     )
     def post(self, request, token):
-        serializer = PasswordResetSerializer(data={**request.data, 'token': token})
+        serializer = PasswordResetSerializer(data=request.data, context={'token': token})
         if serializer.is_valid():
             serializer.save()
             return Response({"message": "Password reset successful!"}, status=status.HTTP_200_OK)
