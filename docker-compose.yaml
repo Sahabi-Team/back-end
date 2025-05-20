@@ -15,7 +15,7 @@ services:
       DJANGO_SUPERUSER_PHONE_NUMBER: 09123456789
 
   nginx:
-    image: nginx:latest
+    image: nginx:latest 
     container_name: nginx
     ports:
       - "80:80"
