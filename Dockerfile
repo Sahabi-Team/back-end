@@ -31,6 +31,8 @@ RUN rm -rf */migrations
 
 RUN rm -rf */__pycache__
 
+RUN ls -la /app  
+
 RUN python manage.py makemigrations authentication trainer_auth tests client_auth exercise workout analytics permissions opinions mentorship notification chat
 
 RUN python manage.py migrate
@@ -44,7 +46,5 @@ RUN python manage.py collectstatic
 # Expose the Django port
 EXPOSE 8000
 
-ENTRYPOINT ["/app/entrypoint.sh"]
-
 # Run Django’s development server
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"] 
