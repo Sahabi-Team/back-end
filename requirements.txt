@@ -31,3 +31,8 @@ uritemplate==4.1.1
 urllib3==2.4.0
 zope.event==5.0
 zope.interface==7.2
+pytest
+pytest-django
+pytest-asyncio
+channels
+daphne
