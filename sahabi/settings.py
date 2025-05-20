@@ -27,7 +27,7 @@ SECRET_KEY = '605foi!lm@ctdu%@fzo9hsf(-+5=tm$kv-6wi_68szks=4ho54'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['ighader.pythonanywhere.com','localhost','127.0.0.1', '84.234.29.28']
+ALLOWED_HOSTS = ['ighader.pythonanywhere.com','localhost','127.0.0.1', '84.234.29.28', '5.75.193.64']
 
 
 # Application definition
@@ -144,7 +144,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Production domain configuration
-PRODUCTION_DOMAIN = 'http://84.234.29.28:8000'  # Replace with your actual production domain
+PRODUCTION_DOMAIN = 'http://5.75.193.64:8000'  # Replace with your actual production domain
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
