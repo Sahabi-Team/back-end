@@ -54,6 +54,8 @@ jobs:
 
           cd /home/${{ secrets.SERVER_USER }}/
 
+          echo "${{ secrets.TOKEN }}" | docker login ghcr.io -u ${{ secrets.USERNAME }} --password-stdin
+
           docker compose pull
           
           docker compose down
