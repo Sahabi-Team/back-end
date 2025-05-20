@@ -31,7 +31,7 @@ jobs:
         password: ${{ secrets.TOKEN }}
 
     - name: Build and Push Docker Image
-      run: |
+      run: | 
         docker compose build
         docker compose push
     
