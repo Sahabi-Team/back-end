@@ -130,6 +130,7 @@ class ChangePasswordView(APIView):
 
 
 class PasswordResetRequestView(APIView):
+    permission_classes = [AllowAny]
 
     @swagger_auto_schema(
         request_body=PasswordResetRequestSerializer,
@@ -144,15 +145,16 @@ class PasswordResetRequestView(APIView):
 
 
 class PasswordResetConfirmView(APIView):
+    permission_classes = [AllowAny]
 
     @swagger_auto_schema(
         request_body=PasswordResetSerializer,
         responses={200: "Password reset successful!", 400: "Token invalid or expired"}
     )
-    def post(self, request, uid, token):
-        serializer = PasswordResetSerializer(data=request.data)
+    def post(self, request, token):
+        serializer = PasswordResetSerializer(data=request.data, context={'token': token})
         if serializer.is_valid():
-            serializer.save(uid, token)
+            serializer.save()
             return Response({"message": "Password reset successful!"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

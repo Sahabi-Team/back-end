@@ -5,6 +5,10 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from .models import Test
 from .serializers import TestSerializer
 from client_auth.models import Trainee
+from trainer_auth.models import Trainer
+from django.db.models import Max
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 class TestCreateView(generics.CreateAPIView):
     """
@@ -41,3 +45,43 @@ class TestListView(generics.ListAPIView):
             return Test.objects.filter(trainee=trainee).order_by("-created_at")  # Show latest tests first
         except Trainee.DoesNotExist:
             return Test.objects.none()  # If the user is not a trainee, return empty list
+
+class TrainerPupilTestsView(APIView):
+    """
+    API for trainers to get the latest body test results for their pupils.
+    Returns the most recent test for each trainee under the trainer's mentorship.
+    """
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_description="Get the latest body test results for all active trainees under the trainer's mentorship",
+        responses={
+            200: TestSerializer(many=True),
+            403: "Permission Denied - Only trainers can access this endpoint",
+            401: "Authentication credentials were not provided"
+        },
+        tags=['tests']
+    )
+    def get(self, request):
+        # Ensure the user is a Trainer
+        try:
+            trainer = request.user.trainer_profile
+        except Trainer.DoesNotExist:
+            return Response({"error": "Only trainers can access this endpoint."}, status=403)
+
+        # Get all trainees under this trainer's mentorship
+        trainees = Trainee.objects.filter(
+            mentorships__trainer=trainer,
+            mentorships__is_active=True
+        ).distinct()
+
+        # Get the latest test for each trainee
+        latest_tests = []
+        for trainee in trainees:
+            latest_test = Test.objects.filter(trainee=trainee).order_by('-created_at').first()
+            if latest_test:
+                latest_tests.append(latest_test)
+
+        serializer = TestSerializer(latest_tests, many=True)
+        return Response(serializer.data)
