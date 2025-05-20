@@ -31,7 +31,7 @@ RUN rm -rf */migrations
 
 RUN rm -rf */__pycache__
 
-RUN python manage.py makemigrations authentication trainer_auth tests client_auth exercise workout analytics permissions opinions mentorship notification
+RUN python manage.py makemigrations authentication trainer_auth tests client_auth exercise workout analytics permissions opinions mentorship notification chat
 
 RUN python manage.py migrate
 
