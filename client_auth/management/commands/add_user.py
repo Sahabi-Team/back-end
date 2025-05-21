@@ -67,8 +67,8 @@ class Command(BaseCommand):
             # Create trainee profile
             trainee = Trainee.objects.create(
                 user=user,
-                height=random.uniform(150, 200),  # Random height between 150-200 cm
-                weight=random.uniform(50, 100)    # Random weight between 50-100 kg
+                height=random.randint(150, 200),  # Random height between 150-200 cm
+                weight=random.randint(50, 100)    # Random weight between 50-100 kg
             )
             trainees.append(trainee)
             test = Test.objects.create(
@@ -76,9 +76,9 @@ class Command(BaseCommand):
                 gender=random.choice(["male", "female"]),
                 body_form=random.randint(0, 10),
                 birth_date= f"{random.randint(1990, 2005)}-{random.randint(1, 12)}-{random.randint(1, 28)}",
-                weight=random.uniform(50, 100),
-                height=random.uniform(150, 200),
-                goal_weight=random.uniform(50, 100),
+                weight=random.randint(50, 100),
+                height=random.randint(150, 200),
+                goal_weight=random.randint(50, 100),
                 goal=random.choice(["lose_weight", "gain_muscle", "stay_fit"]),
                 equipment=random.choice(["gym", "home", "outdoor"]),
                 workout_days=random.choice(["morning", "evening", "afternoon"]),
@@ -110,7 +110,8 @@ class Command(BaseCommand):
                 password=password,
                 first_name=first_name,
                 last_name=last_name,
-                name = name
+                name = name,
+                usertype = "trainer"
             )
 
             if available_pictures:
