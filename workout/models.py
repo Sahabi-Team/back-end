@@ -36,7 +36,7 @@ class WorkoutExercise(models.Model):
     duration = models.PositiveIntegerField(null=True, blank=True)
     description = models.TextField(blank=True)
     order = models.PositiveIntegerField(default=0)
-    day = models.PositiveIntegerField(help_text="Day number of the workout plan this exercise is scheduled for", default=1)  # ✅ New field
+    day = models.PositiveIntegerField(help_text="Day number of the workout plan this exercise is scheduled for", default=1)
 
     class Meta:
         ordering = ['order']

@@ -165,7 +165,8 @@ class Command(BaseCommand):
                             exercise=Exercise.objects.get(id=random.randint(1, int(Exercise.objects.count() * 0.8))),
                             sets=random.randint(1, 5),
                             reps=random.randint(1, 10),
-                            order=j
+                            order=j,
+                            day=random.randint(1, 7)
                         )
 
         self.stdout.write(

@@ -27,7 +27,7 @@ COPY . /app/
 
 RUN rm -f db.sqlite3
 
-RUN rm -rf */migrations
+# RUN rm -rf */migrations
 
 RUN rm -rf */__pycache__
 
