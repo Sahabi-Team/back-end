@@ -127,7 +127,7 @@ class WorkoutExerciseViewSet(viewsets.ModelViewSet):
             exercise = Exercise.objects.get(id=exercise_id)
             
             if workout_plan.mentorship.trainer.user != self.request.user:
-                raise permissions.PermissionDenied("You can only add exercises to your own workout plans.")
+                raise serializers.ValidationError("You can only add exercises to your own workout plans.")
             
             # Check if either reps or duration is provided
             if not self.request.data.get('reps') and not self.request.data.get('duration'):
