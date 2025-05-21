@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import Opinion
+from .models import Ticket
 
-@admin.register(Opinion)
-class OpinionAdmin(admin.ModelAdmin):
-    list_display = ['user', 'created_at']
+@admin.register(Ticket)
+class TicketAdmin(admin.ModelAdmin):
+    list_display = ['title', 'name', 'created_at']
