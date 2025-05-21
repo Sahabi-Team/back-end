@@ -1,10 +1,10 @@
 from rest_framework import serializers
-from .models import Opinion
+from .models import Ticket
 
-class OpinionSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source='user.name', read_only=True)
+class TicketSerializer(serializers.ModelSerializer):
+    ticket_id = serializers.PrimaryKeyRelatedField(source='ticket.id', read_only=True)
 
     class Meta:
-        model = Opinion
-        fields = ['id', 'user', 'text', 'rating', 'created_at', 'name']
-        read_only_fields = ['user', 'created_at', 'name']
+        model = Ticket
+        fields = ['ticket_id', 'title', 'name', 'text', 'phone_number', 'email', 'created_at']
+        read_only_fields = ['created_at']

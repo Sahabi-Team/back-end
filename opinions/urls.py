@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import OpinionListView, OpinionCreateUpdateView
+from .views import TicketListView, TicketCreateUpdateView
 
 urlpatterns = [
-    path('', OpinionListView.as_view(), name='opinion-list'),
-    path('my/', OpinionCreateUpdateView.as_view(), name='opinion-create-update'),
+    path('', TicketListView.as_view(), name='ticket-list'),
+    path('create/', TicketCreateUpdateView.as_view(), name='ticket-create'),
 ]
