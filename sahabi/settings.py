@@ -134,8 +134,12 @@ EMAIL_HOST_PASSWORD = 'pvvd acge atkv bble'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'sahabi_db',
+        'USER': 'sahabi_user',
+        'PASSWORD': 'sahabi_pass',
+        'HOST': 'db',
+        'PORT': '5432',
     }
 }
 
