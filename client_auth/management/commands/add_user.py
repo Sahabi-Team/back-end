@@ -34,7 +34,7 @@ class Command(BaseCommand):
                             if f.endswith(('.jpg', '.jpeg', '.png'))]
         
         first_names=["سیانور", "معین", "محمدمهدی", "نازنین", "علی", "حبیب", "ایمان", "هلیا", "فرزان", "داکتر"]
-        last_names=["ساختمان دار", "اکبری", "داستان دوست", "کیبوردی", "موفاسا", "قاشق فر", "قادیکلائی شهمیرزادی الاصل", "میرزاقاسمی دوست", "آدامس فر", "مَک مَکِنا"]
+        last_names=["ساختمان دار", "اکبری", "داستان دوست", "کیبوردی", "موفاسا", "قاشق فر", "قادیکلائی شهمیرزادی", "میرزاقاسمی دوست", "آدامس فر", "مَک مَکِنا"]
         
         for i in range(count):
             # Create a user
@@ -79,7 +79,7 @@ class Command(BaseCommand):
                 weight=random.randint(50, 100),
                 height=random.randint(150, 200),
                 goal_weight=random.randint(50, 100),
-                goal=random.choice(["lose_weight", "gain_muscle", "stay_fit"]),
+                goal=random.choice(["کاهش وزن", "ساخت عضله", "stay_fit"]),
                 equipment=random.choice(["gym", "home", "outdoor"]),
                 workout_days=random.choice(["morning", "evening", "afternoon"]),
                 diseases=random.choice(["diabetes", "hypertension", "obesity", "none"]),
