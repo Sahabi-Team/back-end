@@ -60,7 +60,7 @@ class WorkoutPlanViewSet(viewsets.ModelViewSet):
         try:
             mentorship = Mentorship.objects.get(id=mentorship_id)
             if mentorship.trainer.user != self.request.user:
-                raise permissions.PermissionDenied("You can only create workout plans for your own mentorships.")
+                raise PermissionDenied("You can only create workout plans for your own mentorships.")
             serializer.save()
         except Mentorship.DoesNotExist:
             raise serializers.ValidationError("Mentorship not found.")
