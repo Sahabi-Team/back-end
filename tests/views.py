@@ -83,5 +83,5 @@ class TrainerPupilTestsView(APIView):
             if latest_test:
                 latest_tests.append(latest_test)
 
-        serializer = TestSerializer(latest_tests, many=True)
+        serializer = TestSerializer(latest_tests, many=True, context={'request': request})
         return Response(serializer.data)
