@@ -57,3 +57,4 @@ pytest-django
 pytest-asyncio
 channels
 daphne
+jdatetime

@@ -19,13 +19,13 @@ if exist db.sqlite3 (
     del db.sqlite3
 )
 
-REM Make migrations
-echo Making migrations...
-python manage.py makemigrations
+@REM REM Make migrations
+@REM echo Making migrations...
+@REM python manage.py makemigrations
 
-REM Apply migrations
-echo Applying migrations...
-python manage.py migrate
+@REM REM Apply migrations
+@REM echo Applying migrations...
+@REM python manage.py migrate
 
-echo Done!
-pause
+@REM echo Done!
+@REM pause

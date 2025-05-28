@@ -28,8 +28,8 @@ class Comment(models.Model):
     rating = models.PositiveSmallIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        unique_together = ('trainee', 'trainer')
+    # class Meta:
+    #     unique_together = ('trainee', 'trainer')
 
     def __str__(self):
         return f"{self.trainee.user.email} → {self.trainer.user.email} = {self.rating}"

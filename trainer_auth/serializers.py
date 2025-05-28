@@ -3,6 +3,9 @@ from .models import Trainer, Comment
 from authentication.models import User
 from drf_yasg.utils import swagger_serializer_method
 from sahabi.settings import PRODUCTION_DOMAIN
+import jdatetime
+from datetime import timedelta
+from django.utils import timezone
 
 class TrainerSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(required=False)
@@ -185,8 +188,33 @@ class TrainerPublicProfileSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     trainee_name = serializers.CharField(source='trainee.user.name', read_only=True)
     trainee_email = serializers.EmailField(source='trainee.user.email', read_only=True)
+    created_at_humanized = serializers.SerializerMethodField()
+    created_at_jalali = serializers.SerializerMethodField()
+
 
     class Meta:
         model = Comment
-        fields = ['id', 'trainee_name', 'trainee_email', 'trainer', 'comment', 'rating', 'created_at']
-        read_only_fields = ['trainee_name', 'trainee_email', 'created_at']
+        fields = ['id', 'trainee_name', 'trainee_email', 'trainer', 'comment', 'rating', 'created_at', 'created_at_humanized','created_at_jalali']     
+        read_only_fields = ['trainee_name', 'trainee_email', 'created_at', 'created_at_humanized','created_at_jalali']
+
+    def get_created_at_humanized(self, obj):
+        now = timezone.now()
+        delta = now - obj.created_at
+
+        if delta < timedelta(minutes=1):
+            return "لحظاتی پیش"
+        elif delta < timedelta(hours=1):
+            minutes = int(delta.total_seconds() // 60)
+            return f"{minutes} دقیقه پیش"
+        elif delta < timedelta(days=1):
+            hours = int(delta.total_seconds() // 3600)
+            return f"{hours} ساعت پیش"
+        elif delta < timedelta(days=7):
+            days = delta.days
+            return f"{days} روز پیش"
+        else:
+            jd = jdatetime.datetime.fromgregorian(datetime=obj.created_at)
+            return jd.strftime('%Y/%m/%d')
+    def get_created_at_jalali(self,obj):
+        jd = jdatetime.datetime.fromgregorian(datetime=obj.created_at)
+        return jd.strftime('%Y/%m/%d')
