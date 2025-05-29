@@ -13,6 +13,8 @@ services:
       DJANGO_SUPERUSER_EMAIL: admin@example.com
       DJANGO_SUPERUSER_PASSWORD: admin
       DJANGO_SUPERUSER_PHONE_NUMBER: 09123456789
+    volumes:
+      - ./media:/app/media
 
   nginx:
     image: nginx:latest 
@@ -38,5 +40,5 @@ services:
       - "5432:5432"
 
 volumes:
-  postgres_data:    
+  postgres_data:
 

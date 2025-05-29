@@ -44,7 +44,7 @@ class Test(models.Model):
         ('chest', 'Chest'),
         ('full_body', 'Full Body'),
     ]
-    focus_area = models.CharField(max_length=20, help_text="Primary body area to focus on")
+    focus_area = models.TextField(help_text="Primary body area to focus on")
     
     fitness_level = models.IntegerField(
         help_text="Workout experience level (1-6)",

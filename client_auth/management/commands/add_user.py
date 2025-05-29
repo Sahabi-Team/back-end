@@ -34,7 +34,7 @@ class Command(BaseCommand):
                             if f.endswith(('.jpg', '.jpeg', '.png'))]
         
         first_names=["سیانور", "معین", "محمدمهدی", "نازنین", "علی", "حبیب", "ایمان", "هلیا", "فرزان", "داکتر"]
-        last_names=["ساختمان دار", "اکبری", "داستان دوست", "کیبوردی", "موفاسا", "قاشق فر", "قادیکلائی شهمیرزادی الاصل", "میرزاقاسمی دوست", "آدامس فر", "مَک مَکِنا"]
+        last_names=["ساختمان دار", "اکبری", "داستان دوست", "کیبوردی", "موفاسا", "قاشق فر", "قادیکلائی شهمیرزادی", "میرزاقاسمی دوست", "آدامس فر", "مَک مَکِنا"]
         
         for i in range(count):
             # Create a user
@@ -67,23 +67,23 @@ class Command(BaseCommand):
             # Create trainee profile
             trainee = Trainee.objects.create(
                 user=user,
-                height=random.uniform(150, 200),  # Random height between 150-200 cm
-                weight=random.uniform(50, 100)    # Random weight between 50-100 kg
+                height=random.randint(150, 200),  # Random height between 150-200 cm
+                weight=random.randint(50, 100)    # Random weight between 50-100 kg
             )
             trainees.append(trainee)
             test = Test.objects.create(
                 trainee=trainee,
                 gender=random.choice(["male", "female"]),
-                body_form=random.randint(0, 10),
+                body_form=random.randint(1, 6),
                 birth_date= f"{random.randint(1990, 2005)}-{random.randint(1, 12)}-{random.randint(1, 28)}",
-                weight=random.uniform(50, 100),
-                height=random.uniform(150, 200),
-                goal_weight=random.uniform(50, 100),
-                goal=random.choice(["lose_weight", "gain_muscle", "stay_fit"]),
-                equipment=random.choice(["gym", "home", "outdoor"]),
-                workout_days=random.choice(["morning", "evening", "afternoon"]),
-                diseases=random.choice(["diabetes", "hypertension", "obesity", "none"]),
-                focus_area=random.choice(["arms", "legs", "core", "back", "chest", "full_body"]),
+                weight=random.randint(50, 100),
+                height=random.randint(150, 200),
+                goal_weight=random.randint(50, 100),
+                goal=random.choice(["کاهش وزن", "ساخت عضله", "تناسب اندام"]),
+                equipment=random.choice(["باشگاه", "خونه", "بیرون"]),
+                workout_days=random.choice(["صبح", "غروب", "بعد از ظهر"]),
+                diseases="" if random.random() < 0.2 else ",".join(random.sample(["دیابت", "فشار خون", "چاقی مفرط", "آسم", "روماتیسم"], random.randint(1, 3))),
+                focus_area=",".join(random.sample(["بازو", "پاها", "سینه", "پشت", "شکم", "تناسب اندام"], random.randint(1, 3))),
                 fitness_level=random.randint(1, 6)
             )
         
@@ -110,7 +110,8 @@ class Command(BaseCommand):
                 password=password,
                 first_name=first_name,
                 last_name=last_name,
-                name = name
+                name = name,
+                usertype = "trainer"
             )
 
             if available_pictures:
