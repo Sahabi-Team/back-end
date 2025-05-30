@@ -110,7 +110,8 @@ class Command(BaseCommand):
                 password=password,
                 first_name=first_name,
                 last_name=last_name,
-                name = name
+                name = name,
+                usertype='trainer'
             )
 
             if available_pictures:
