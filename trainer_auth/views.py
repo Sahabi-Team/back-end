@@ -1,30 +1,24 @@
 # Django imports
+from django.db.models import Q, Avg, FloatField, Value
+from django.db.models.functions import Coalesce
+from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import get_object_or_404
+
+# Third-party imports
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 
 # DRF imports
-from rest_framework import status
+from rest_framework import status, generics, permissions, filters
 from rest_framework.filters import OrderingFilter
-from rest_framework.generics import (
-    RetrieveAPIView,
-    RetrieveUpdateAPIView,
-    ListAPIView
-)
-from rest_framework.permissions import IsAuthenticated,AllowAny
+from rest_framework.generics import RetrieveAPIView, RetrieveUpdateAPIView, ListAPIView
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.parsers import MultiPartParser, FormParser
-
-# Swagger (drf_yasg) imports
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
 
 # Local app imports
-from .models import Trainer
-from rest_framework import status, generics, permissions
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import OrderingFilter
 from .models import Trainer, Comment
 from .serializers import (
     TrainerSerializer,
@@ -34,24 +28,19 @@ from .serializers import (
 )
 from client_auth.models import Trainee
 from client_auth.serializers import TraineeSerializer
-from workout.models import WorkoutPlan
-from permissions.permissions import IsTrainer, IsTrainee
-from django.shortcuts import get_object_or_404
+from workout.models import WorkoutPlan, Mentorship
 from authentication.models import User
-from workout.models import Mentorship
-from rest_framework import generics, permissions, filters
-from django_filters.rest_framework import DjangoFilterBackend
-from django.db.models import Q, Avg, FloatField, Value
-from django.db.models.functions import Coalesce
-from .models import Trainer
-from .serializers import TrainerPublicProfileSerializer
+from permissions.permissions import IsTrainer, IsTrainee
 
 class TrainerDetailView(generics.RetrieveAPIView):
     serializer_class = TrainerSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
-        return self.request.user.trainer_profile
+        try:
+            return self.request.user.trainer_profile
+        except ObjectDoesNotExist:
+            return None
 
     @swagger_auto_schema(
         operation_description="Get trainer profile details",
