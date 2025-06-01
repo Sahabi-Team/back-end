@@ -132,23 +132,23 @@ EMAIL_HOST_PASSWORD = 'pvvd acge atkv bble'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'sahabi_db',
-        'USER': 'sahabi_user',
-        'PASSWORD': 'sahabi_pass',
-        'HOST': 'db',
-        'PORT': '5432',
-    }
-}
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'sahabi_db',
+#         'USER': 'sahabi_user',
+#         'PASSWORD': 'sahabi_pass',
+#         'HOST': 'db',
+#         'PORT': '5432',
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 # Media files configuration
 MEDIA_URL = '/media/'
