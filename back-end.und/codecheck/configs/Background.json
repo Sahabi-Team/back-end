@@ -1,0 +1,15 @@
+{
+    "automatic": true,
+    "checks": [
+        "STI_FRIENDS",
+        "STI_SPECIAL_MEMBER_FUNCTIONS",
+        "STI_UNUSED"
+    ],
+    "excludes": [
+    ],
+    "name": "Background",
+    "parents": [
+    ],
+    "tags": [
+    ]
+}
