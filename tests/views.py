@@ -9,6 +9,8 @@ from trainer_auth.models import Trainer
 from django.db.models import Max
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from datetime import timedelta
+from django.utils import timezone
 
 class TestCreateView(generics.CreateAPIView):
     """
@@ -83,5 +85,55 @@ class TrainerPupilTestsView(APIView):
             if latest_test:
                 latest_tests.append(latest_test)
 
-        serializer = TestSerializer(latest_tests, many=True)
+        serializer = TestSerializer(latest_tests, many=True, context={'request': request})
         return Response(serializer.data)
+
+class LastTestCheckView(APIView):
+    """
+    API to check if a client has taken a test within the last month and get their last test date.
+    """
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_description="Check if a client has taken a test within the last month and get their last test date",
+        responses={
+            200: openapi.Response(
+                description="Test status and last test date",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'has_test_in_last_month': openapi.Schema(type=openapi.TYPE_BOOLEAN),
+                        'last_test_date': openapi.Schema(type=openapi.TYPE_STRING, format='date-time'),
+                    }
+                )
+            ),
+            403: "Permission Denied - Only trainees can access this endpoint",
+            401: "Authentication credentials were not provided"
+        },
+        tags=['tests']
+    )
+    def get(self, request):
+        # Ensure the user is a Trainee
+        try:
+            trainee = request.user.trainee_profile
+        except Trainee.DoesNotExist:
+            return Response({"error": "Only trainees can access this endpoint."}, status=403)
+
+        # Get the last test for the trainee
+        last_test = Test.objects.filter(trainee=trainee).order_by('-created_at').first()
+
+        if not last_test:
+            return Response({
+                'has_test_in_last_month': False,
+                'last_test_date': None
+            })
+
+        # Check if the last test was within the last month
+        one_month_ago = timezone.now() - timedelta(days=30)
+        has_test_in_last_month = last_test.created_at >= one_month_ago
+
+        return Response({
+            'has_test_in_last_month': has_test_in_last_month,
+            'last_test_date': last_test.created_at
+        })
