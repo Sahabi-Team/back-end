@@ -75,7 +75,7 @@ class PasswordResetRequestSerializer(serializers.Serializer):
         token = password_reset_token.make_token(user)
 
         # Generate Password Reset Link with just the token
-        reset_link = f"{PRODUCTION_DOMAIN}/reset-password/{token}/"
+        reset_link = f"http://gym-bato.ir/resetpassword/{token}/"
 
         # Send Email
         send_mail(
