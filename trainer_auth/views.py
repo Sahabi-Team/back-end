@@ -292,3 +292,20 @@ class TrainerPublicProfileView(APIView):
 
         serializer = TrainerPublicProfileSerializer(trainer)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class TopRatedTrainersView(APIView):
+    permission_classes=[permissions.AllowAny]
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'top', openapi.IN_QUERY, description="Number of top trainers to return",
+                type=openapi.TYPE_INTEGER
+            )
+        ],
+        responses={200: TrainerSerializer(many=True)}
+    )
+    def get(self, request):
+        top = int(request.GET.get('top', 5))
+        trainers = Trainer.objects.annotate(avg_rating=Avg('comments_received__rating')).order_by('-avg_rating')[:top]
+        serializer = TrainerSerializer(trainers, many=True)
+        return Response(serializer.data)
