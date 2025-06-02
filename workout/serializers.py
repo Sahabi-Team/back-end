@@ -3,7 +3,7 @@ from .models import WorkoutPlan, WorkoutExercise
 from exercise.serializers import ExerciseSerializer
 
 class WorkoutExerciseSerializer(serializers.ModelSerializer):
-    exercise_id = serializers.IntegerField(write_only=True)
+    exercise_id = serializers.SerializerMethodField()
     workout_plan_id = serializers.IntegerField(write_only=True, required=False)
 
     class Meta:
@@ -28,6 +28,8 @@ class WorkoutExerciseSerializer(serializers.ModelSerializer):
         if data.get('reps') and data.get('duration'):
             raise serializers.ValidationError("Provide either reps or duration, not both.")
         return data
+    def get_exercise_id(self,obj):
+        return obj.exercise.id
 
 
 class WorkoutPlanSerializer(serializers.ModelSerializer):
