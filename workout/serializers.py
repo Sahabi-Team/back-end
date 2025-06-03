@@ -5,7 +5,7 @@ from exercise.serializers import ExerciseSerializer
 class WorkoutExerciseSerializer(serializers.ModelSerializer):
     exercise_id = serializers.SerializerMethodField()
     workout_plan_id = serializers.IntegerField(write_only=True, required=False)
-
+    exercise_name = serializers.SerializerMethodField()
     class Meta:
         model = WorkoutExercise
         fields = [
