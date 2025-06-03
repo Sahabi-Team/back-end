@@ -3,14 +3,15 @@ from .models import WorkoutPlan, WorkoutExercise
 from exercise.serializers import ExerciseSerializer
 
 class WorkoutExerciseSerializer(serializers.ModelSerializer):
-    exercise_id = serializers.SerializerMethodField()
+    exercise_id = serializers.IntegerField(write_only=True)
     workout_plan_id = serializers.IntegerField(write_only=True, required=False)
     exercise_name = serializers.SerializerMethodField()
+    exercise_id_display=serializers.SerializerMethodField()
     class Meta:
         model = WorkoutExercise
         fields = [
-            'id', 'exercise_id','exercise_name', 'workout_plan_id', 'sets', 'reps',
-            'duration', 'description', 'order', 'day'  
+            'id', 'exercise_id', 'exercise_name', 'workout_plan_id', 'sets', 'reps',
+            'duration', 'description', 'order', 'day','exercise_id_display'
         ]
         read_only_fields = ['id']
         extra_kwargs = {
@@ -19,7 +20,7 @@ class WorkoutExerciseSerializer(serializers.ModelSerializer):
             'duration': {'help_text': 'Duration in seconds (optional if reps is provided)'},
             'description': {'help_text': 'Additional instructions or notes for this exercise'},
             'order': {'help_text': 'Order of the exercise in the workout plan'},
-            'day': {'help_text': 'Day number this exercise is scheduled for'} 
+            'day': {'help_text': 'Day number this exercise is scheduled for'}
         }
 
     def validate(self, data):
@@ -28,10 +29,12 @@ class WorkoutExerciseSerializer(serializers.ModelSerializer):
         if data.get('reps') and data.get('duration'):
             raise serializers.ValidationError("Provide either reps or duration, not both.")
         return data
-    def get_exercise_id(self,obj):
-        return obj.exercise.id
-    def get_exercise_name(self,obj):
+
+    def get_exercise_name(self, obj):
         return obj.exercise.name
+    def get_exercise_id_display(self, obj):
+        return obj.exercise.id
+
 
 
 class WorkoutPlanSerializer(serializers.ModelSerializer):
