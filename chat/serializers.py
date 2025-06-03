@@ -6,10 +6,11 @@ class MessageSerializer(serializers.ModelSerializer):
     text = serializers.CharField(source='content')
     date = serializers.SerializerMethodField()
     time = serializers.SerializerMethodField()
+    seen = serializers.BooleanField()
 
     class Meta:
         model = Message
-        fields = ['fromMe', 'text', 'date', 'time']
+        fields = ['fromMe', 'text', 'date', 'time', 'seen']
 
     def get_fromMe(self, obj):
         request = self.context.get('request')

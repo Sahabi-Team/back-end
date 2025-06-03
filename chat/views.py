@@ -2,13 +2,19 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.utils.dateparse import parse_datetime
+
+from client_auth.models import Trainee
+from trainer_auth.models import Trainer
 from .models import Message
 from .serializers import MessageSerializer
 from mentorship.models import Mentorship
 
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-
+from django.db.models import Count, Max, Q
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 class ChatHistoryView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -43,3 +49,53 @@ class ChatHistoryView(APIView):
 
         serializer = MessageSerializer(messages, many=True, context={'request': request})
         return Response(serializer.data)
+
+
+
+class UnreadMessagesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+
+        # Try getting the user as a trainee or trainer
+        try:
+            trainee = Trainee.objects.get(user=user)
+        except Trainee.DoesNotExist:
+            trainee = None
+
+        try:
+            trainer = Trainer.objects.get(user=user)
+        except Trainer.DoesNotExist:
+            trainer = None
+
+        # Get mentorships where the user is either the trainee or trainer
+        mentorships = Mentorship.objects.filter(
+            Q(trainee=trainee) | Q(trainer=trainer)
+        )
+
+        result = []
+        for mentorship in mentorships:
+            if trainee and mentorship.trainee == trainee:
+                other_user = mentorship.trainer.user
+            else:
+                other_user = mentorship.trainee.user
+
+            unread = Message.objects.filter(
+                mentorship=mentorship,
+                receiver=user,
+                seen=False
+            )
+
+            unread_count = unread.count()
+            last_message = unread.order_by('-timestamp').first()
+
+            result.append({
+                "user_id": other_user.id,
+                "mentorship_id":mentorship.id,
+                "username": other_user.username,
+                "unread_count": unread_count,
+                "last_message": last_message.content if last_message else None
+            })
+
+        return Response(result)

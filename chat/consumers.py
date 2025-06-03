@@ -1,3 +1,4 @@
+from django.utils import timezone
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
@@ -19,6 +20,7 @@ def get_user(user_id):
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        print(self.scope)
         self.mentorship_id = self.scope['url_route']['kwargs']['mentorship_id']
         self.room_group_name = f'mentorship_{self.mentorship_id}'
 
@@ -41,6 +43,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         #     return
 
         # Check if user is part of the mentorship
+        print(self.mentorship_id)
         is_participant = await self.is_user_in_mentorship(self.mentorship, self.scope["user"])
         if not is_participant:
             await self.close()
@@ -48,6 +51,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
+        await self.mark_messages_as_seen(self.scope["user"])
+
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
@@ -57,6 +62,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = data['message']
         sender = self.scope["user"]
 
+        if data.get("type") == "mark_seen":
+            await self.mark_messages_as_seen(self.scope["user"])
+            return
         # Infer receiver based on mentorship
         receiver = (
             self.mentorship.trainer.user if sender == self.mentorship.trainee.user
@@ -64,6 +72,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
         saved = await self.save_message(sender.id, receiver.id, message)
+
+        await self.mark_messages_as_seen(sender)
 
         await self.channel_layer.group_send(
             self.room_group_name,
@@ -103,3 +113,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def is_user_in_mentorship(self, mentorship, user):
         return user in [mentorship.trainee.user, mentorship.trainer.user]
+    @database_sync_to_async
+    def mark_messages_as_seen(self, user):
+        Message.objects.filter(
+            mentorship=self.mentorship,
+            receiver=user,
+            seen=False
+        ).update(seen=True, seen_at=timezone.now())
