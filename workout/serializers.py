@@ -9,7 +9,7 @@ class WorkoutExerciseSerializer(serializers.ModelSerializer):
     class Meta:
         model = WorkoutExercise
         fields = [
-            'id', 'exercise_id', 'workout_plan_id', 'sets', 'reps',
+            'id', 'exercise_id','exercise_name', 'workout_plan_id', 'sets', 'reps',
             'duration', 'description', 'order', 'day'  
         ]
         read_only_fields = ['id']
@@ -30,6 +30,8 @@ class WorkoutExerciseSerializer(serializers.ModelSerializer):
         return data
     def get_exercise_id(self,obj):
         return obj.exercise.id
+    def get_exercise_name(self,obj):
+        return obj.exercise.name
 
 
 class WorkoutPlanSerializer(serializers.ModelSerializer):
