@@ -174,9 +174,7 @@ class FilteredTrainerListView(generics.ListAPIView):
             avg_rating=Round(Avg('comments_received__rating'), 1)
         )
 
-        queryset = queryset.annotate(
-            ratingg=Floor('avg_rating')
-        )
+        queryset = queryset.annotate(avg_rating=Round(Avg('comments_received__rating', filter=Q(comments_received__approved=True)), 1))
         
         search = params.get('search')
         if search:
@@ -256,7 +254,7 @@ class CommentListView(generics.ListAPIView):
 
     def get_queryset(self):
         trainer_id = self.kwargs.get('trainer_id')
-        return Comment.objects.filter(trainer__id=trainer_id)
+        return Comment.objects.filter(trainer__id=trainer_id,approved=True)
 
 
 class CommentDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -306,6 +304,6 @@ class TopRatedTrainersView(APIView):
     )
     def get(self, request):
         top = int(request.GET.get('top', 5))
-        trainers = Trainer.objects.annotate(avg_rating=Avg('comments_received__rating')).order_by('-avg_rating')[:top]
+        trainers = Trainer.objects.annotate(avg_rating=Avg('comments_received__rating', filter=Q(comments_received__approved=True))).order_by('-avg_rating')[:top]
         serializer = TrainerSerializer(trainers, many=True)
         return Response(serializer.data)

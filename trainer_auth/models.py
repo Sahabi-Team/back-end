@@ -17,7 +17,10 @@ class Trainer(models.Model):
     @property
     def rating(self):
         from math import ceil
-        return round(self.comments_received.aggregate(avg_rating=models.Avg('rating'))['avg_rating'] or 0.0,1)
+        return round(
+            self.comments_received.filter(approved=True)
+            .aggregate(avg_rating=models.Avg('rating'))['avg_rating'] or 0.0, 1
+        )
 
 
 
@@ -27,7 +30,7 @@ class Comment(models.Model):
     comment = models.TextField()
     rating = models.PositiveSmallIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
-
+    approved = models.BooleanField(default=False)
     # class Meta:
     #     unique_together = ('trainee', 'trainer')
 
