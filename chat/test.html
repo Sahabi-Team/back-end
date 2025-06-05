@@ -1,20 +1,24 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>JWT WebSocket Chat Test</title>
 </head>
+
 <body>
     <h2>JWT Authenticated Chat</h2>
 
     <div>
-        <label>Room ID: <input id="room-id" value="2" /></label><br>
         <label>JWT Token: <input id="jwt-token" size="80" placeholder="Paste your JWT token here..." /></label><br>
-        <button onclick="connect()">Connect</button>
+        <button onclick="loadUsers()">Load Chats</button>
     </div>
+
+    <div id="user-list" style="margin-top:20px;"></div>
 
     <hr>
 
     <div id="chat-container" style="display:none;">
+        <h3 id="chat-with"></h3>
         <div id="chat-log" style="border:1px solid #ccc; padding:10px; height:200px; overflow-y:scroll;"></div>
         <input id="chat-message-input" type="text" size="80" placeholder="Type your message..." />
         <button id="chat-message-submit">Send</button>
@@ -22,47 +26,125 @@
 
     <script>
         let chatSocket = null;
+        let currentUserId = null;
 
-        function connect() {
-            const roomId = document.getElementById('room-id').value;
+        async function loadUsers() {
             const token = document.getElementById('jwt-token').value;
 
+            const response = await fetch('http://localhost:8000/api/chat/unread-messages/', {
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+
+            const users = await response.json();
+            const container = document.getElementById('user-list');
+            container.innerHTML = "<h3>Chats:</h3>";
+
+            users.forEach(entry => {
+                const btn = document.createElement('button');
+                btn.innerText = `Mentorship ${entry.mentorship_id} (${entry.unread_count} unread)`;
+                btn.onclick = () => connect(entry.mentorship_id, token, entry.display_name);
+                container.appendChild(btn);
+                container.appendChild(document.createElement('br'));
+            });
+        }
+
+        async function connect(mentorship_id, token, displayName) {
+            if (chatSocket) chatSocket.close();
+
+            currentUserId = mentorship_id;
+
             const wsProtocol = 'ws';
-            const wsUrl = `${wsProtocol}://localhost:8000/ws/chat/${roomId}/?token=${token}`;
+            const wsUrl = `${wsProtocol}://localhost:8000/ws/chat/${mentorship_id}/?token=${token}`;
 
             chatSocket = new WebSocket(wsUrl);
 
-            chatSocket.onopen = function() {
+            chatSocket.onopen = async function () {
                 document.getElementById('chat-container').style.display = 'block';
+                document.getElementById('chat-with').innerText = `Chat with ${displayName}`;
+                document.getElementById('chat-log').innerHTML = '';
                 console.log("WebSocket connected.");
+
+                // Load chat history
+                await loadChatHistory(mentorship_id, token);
+
+                // Mark messages as seen
+                await markSeen(mentorship_id, token);
             };
 
-            chatSocket.onmessage = function(e) {
+            chatSocket.onmessage = function (e) {
                 const data = JSON.parse(e.data);
-                const log = document.getElementById('chat-log');
-                log.innerHTML += `<p><strong>${data.sender}</strong>: ${data.message} <em>${data.timestamp}</em></p>`;
-                log.scrollTop = log.scrollHeight;
+                // Assuming data has sender name, message text, and timestamp
+                appendMessage(data.sender, data.message, data.timestamp);
             };
 
-            chatSocket.onclose = function() {
+            chatSocket.onclose = function () {
                 alert('WebSocket disconnected.');
             };
 
-            document.getElementById('chat-message-submit').onclick = function() {
-                const input = document.getElementById('chat-message-input');
-                const message = input.value;
-                if (message.trim()) {
-                    chatSocket.send(JSON.stringify({ message }));
-                    input.value = '';
-                }
+            document.getElementById('chat-message-submit').onclick = sendMessage;
+            document.getElementById('chat-message-input').onkeyup = function (e) {
+                if (e.keyCode === 13) sendMessage();
             };
+        }
 
-            document.getElementById('chat-message-input').onkeyup = function(e) {
-                if (e.keyCode === 13) {
-                    document.getElementById('chat-message-submit').click();
+        async function loadChatHistory(mentorship_id, token) {
+            const response = await fetch(`http://localhost:8000/api/chat/${mentorship_id}/history/?start=2015-06-01T00:00:00Z&end=2035-06-03T23:59:59Z`, {
+                headers: {
+                    'Authorization': 'Bearer ' + token
                 }
-            };
+            });
+
+            if (!response.ok) {
+                alert('Failed to load chat history');
+                return;
+            }
+
+            const messages = await response.json();
+            messages.forEach(msg => {
+                // Use "Me" if fromMe is true, else some sender name or "Other"
+                const sender = msg.fromMe ? "Me" : (msg.senderName || "Other");
+                appendMessage(sender, msg.text, msg.time);
+            });
+
+            // Scroll to bottom after loading all messages
+            const log = document.getElementById('chat-log');
+            log.scrollTop = log.scrollHeight;
+        }
+
+        async function markSeen(mentorship_id, token) {
+            try {
+                await fetch(`http://localhost:8000/api/chat/${mentorship_id}/mark-seen/`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                });
+                console.log('Marked messages as seen');
+            } catch (err) {
+                console.error('Failed to mark messages as seen', err);
+            }
+        }
+
+        function appendMessage(sender, message, timestamp) {
+            const log = document.getElementById('chat-log');
+            log.innerHTML += `<p><strong>${sender}</strong>: ${message} <em>${new Date(timestamp).toLocaleString()}</em></p>`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+
+        function sendMessage() {
+            const input = document.getElementById('chat-message-input');
+            const message = input.value;
+            if (message.trim()) {
+                chatSocket.send(JSON.stringify({ message }));
+                input.value = '';
+            }
         }
     </script>
 </body>
+
 </html>
