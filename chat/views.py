@@ -35,7 +35,7 @@ class ChatHistoryView(APIView):
         end = request.query_params.get('end')
 
         try:
-            mentorship = Mentorship.objects.get(id=mentorship_id, is_active=True)
+            mentorship = Mentorship.objects.get(id=mentorship_id)
         except Mentorship.DoesNotExist:
             return Response({"detail": "Mentorship not found."}, status=404)
 
