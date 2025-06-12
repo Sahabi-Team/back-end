@@ -1,6 +1,7 @@
 # Use the official Python runtime image
-FROM python:3.13.3-slim-bookworm
- 
+# FROM python:3.13.3-slim-bookworm
+FROM python:3.12
+
 # Create the app directory
 RUN mkdir /app
  
