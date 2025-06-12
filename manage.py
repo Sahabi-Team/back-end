@@ -2,6 +2,10 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+import warnings
+
+# os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+# warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 def main():
