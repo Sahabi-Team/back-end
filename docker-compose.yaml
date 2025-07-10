@@ -13,8 +13,11 @@ services:
       DJANGO_SUPERUSER_EMAIL: admin@example.com
       DJANGO_SUPERUSER_PASSWORD: admin
       DJANGO_SUPERUSER_PHONE_NUMBER: 09123456789
-    env_file:
-      - /envs/trainerapp.env
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_API_BASE: ${OPENAI_API_BASE}
+      OPENAI_MODEL_NAME: ${OPENAI_MODEL_NAME}
+    # env_file:
+    #   - /envs/trainerapp.env
     volumes:
       - ./media:/app/media
 
