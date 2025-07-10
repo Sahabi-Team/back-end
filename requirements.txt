@@ -89,3 +89,4 @@ transformers
 typing_extensions
 urllib3
 hazm
+openai==0.28

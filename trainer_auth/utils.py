@@ -1,47 +1,47 @@
-import os, json, logging, re
-from transformers import BertTokenizer, BertForSequenceClassification, TextClassificationPipeline
-from hazm import Normalizer
+import os
+import logging
+import openai
 from dotenv import load_dotenv
 
 load_dotenv()
 
+import os
+import logging
+import openai
+
 class PersianSwearWordRemover:
-    def __init__(self, model_name=None, swear_file=None):
-        model_name = model_name or os.getenv('MODEL_NAME', 'HooshvareLab/bert-fa-base-uncased-clf-persiannews')
-        swear_file = swear_file or os.getenv('SWEAR_FILE', 'swears.json')
-
-        self.tokenizer = BertTokenizer.from_pretrained(model_name)
-        self.model = BertForSequenceClassification.from_pretrained(model_name)
-        self.pipeline = TextClassificationPipeline(model=self.model, tokenizer=self.tokenizer, return_all_scores=True)
-
-        self.normalizer = Normalizer()
-        self.swear_words = set(self.load_swear_words(swear_file))
-
-    @staticmethod
-    def load_swear_words(file_path):
-        try:
-            with open(file_path, 'r', encoding='utf-8') as file:
-                data = json.load(file)
-                return data.get("swear_words", [])
-        except Exception as e:
-            logging.error(f"Error loading swear words from {file_path}: {e}")
-            return []
-
-    @staticmethod
-    def normalize_text(text):
-        return re.sub(r'(.)\1{2,}', r'\1', text)
-
-    def tokenize(self, text):
-        normalized = self.normalizer.normalize(self.normalize_text(text))
-        return re.findall(r'[\u0600-\u06FF]+', normalized)
-
-    def is_swear_word(self, token):
-        return token in self.swear_words
+    def __init__(self):
+        openai.api_key = os.getenv("OPENAI_API_KEY") 
+        openai.api_base = os.getenv("OPENAI_API_BASE") 
+        self.model = os.getenv("OPENAI_MODEL_NAME")
 
     def contains_swear_word(self, text):
-        tokens = self.tokenize(text)
-        return any(self.is_swear_word(token) for token in tokens)
+        prompt = f"""
+شما یک سیستم بررسی نظرات هستید برای بخش دیدگاه‌ها در پروفایل مربیان ورزشی در یک وب‌سایت که مربیان را به ورزش‌جویان متصل می‌کند. هدف شما شناسایی نظرات نامناسب است.
 
+لطفاً متن زیر را فقط با یکی از این دو پاسخ بررسی کنید:
+- **yes**: اگر متن شامل هر یک از موارد زیر باشد:
+    • کلمات رکیک یا فحاشی
+    • توهین، بی‌احترامی یا محتوای آزاردهنده
+    • تبلیغات، اسپم یا پیام‌هایی که به موضوع ورزش و عملکرد مربی مربوط نیستند
+- **no**: اگر متن محترمانه و مرتبط با خدمات، تجربه یا عملکرد مربی باشد
 
+نظر:
+{text}
 
-remover = PersianSwearWordRemover()
+فقط پاسخ "yes" یا "no" بده. پاسخ اضافی نده.
+"""
+
+        try:
+            response = openai.ChatCompletion.create(
+                model=self.model,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0,
+                max_tokens=3
+            )
+            # print("dbg>> ",text,response)
+            result = response.choices[0].message.content.strip().lower()
+            return result == "yes", result
+        except Exception as e:
+            logging.error(f"Chat API error: {e}")
+            return False, "error"
