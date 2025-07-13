@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: ghcr.io/oklati/sahabi_backend
+    image: ghcr.io/oklati/sahabi_backend:${TAG}
     container_name: backend
     restart: unless-stopped
     ports:

@@ -27,7 +27,7 @@ class PersianSwearWordRemover:
 
 فقط پاسخ "yes" یا "no" بده. پاسخ اضافی نده.
 """
-
+        print(os.getenv("OPENAI_API_KEY") )
         try:
             response = openai.ChatCompletion.create(
                 model=self.model,

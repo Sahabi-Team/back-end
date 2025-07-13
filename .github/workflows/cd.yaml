@@ -32,8 +32,9 @@ jobs:
 
     - name: Build and Push Docker Image
       run: |
-        docker compose build
-        docker compose push
+        export IMAGE_TAG=ghcr.io/oklati/sahabi_backend:${{ github.sha }}
+        docker build -t $IMAGE_TAG .
+        docker push $IMAGE_TAG
     
     - name: Copy files to server via SSH
       uses: appleboy/scp-action@v0.1.0
@@ -46,6 +47,7 @@ jobs:
     
     - name: Generate .env file for Docker Compose
       run: |
+        echo "TAG=${{ github.sha }}" >> .env
         echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
         echo "OPENAI_API_BASE=${{ secrets.OPENAI_API_BASE }}" >> .env
         echo "OPENAI_MODEL_NAME=${{ secrets.OPENAI_MODEL_NAME }}" >> .env
@@ -66,13 +68,11 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         password: ${{ secrets.SERVER_PASSWORD }}
         script: |
-
+          export TAG=${{ github.sha }}
           cd /home/${{ secrets.SERVER_USER }}/
 
           echo "${{ secrets.TOKEN }}" | docker login ghcr.io -u ${{ secrets.USERNAME }} --password-stdin
 
           docker compose pull
-          
           docker compose down
-          
           docker compose up -d
