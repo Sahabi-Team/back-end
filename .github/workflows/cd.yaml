@@ -17,6 +17,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+    - name: Full Docker cleanup on GitHub runner
+      run: |
+        docker container prune -f
+        docker image prune -a -f
+        docker volume prune -f
+        docker network prune -f
     - name: Checkout code
       uses: actions/checkout@v3
       with:
