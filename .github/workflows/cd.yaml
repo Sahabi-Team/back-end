@@ -40,6 +40,7 @@ jobs:
         echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
         echo "OPENAI_API_BASE=${{ secrets.OPENAI_API_BASE }}" >> .env
         echo "OPENAI_MODEL_NAME=${{ secrets.OPENAI_MODEL_NAME }}" >> .env
+        
     - name: Build and Push Docker Image
       run: |
         docker compose build
