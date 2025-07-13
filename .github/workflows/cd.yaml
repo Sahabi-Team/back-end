@@ -30,12 +30,20 @@ jobs:
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.TOKEN }}
 
+    # - name: Build and Push Docker Image
+    #   run: |
+    #     export IMAGE_TAG=ghcr.io/oklati/sahabi_backend:${{ github.sha }}
+    #     docker build -t $IMAGE_TAG .
+    #     docker push $IMAGE_TAG
     - name: Build and Push Docker Image
-      run: |
-        export IMAGE_TAG=ghcr.io/oklati/sahabi_backend:${{ github.sha }}
-        docker build -t $IMAGE_TAG .
-        docker push $IMAGE_TAG
-    
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: ghcr.io/oklati/sahabi_backend:${{ github.sha }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
     - name: Copy files to server via SSH
       uses: appleboy/scp-action@v0.1.0
       with:
