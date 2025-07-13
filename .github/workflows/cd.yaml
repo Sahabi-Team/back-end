@@ -10,15 +10,15 @@ on:
     types:
       - closed
 
-
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout latest hotfix branch
       uses: actions/checkout@v3
+      with:
+        ref: hotfix  
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
@@ -51,13 +51,10 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         password: ${{ secrets.SERVER_PASSWORD }}
         script: |
-
           cd /home/${{ secrets.SERVER_USER }}/
 
           echo "${{ secrets.TOKEN }}" | docker login ghcr.io -u ${{ secrets.USERNAME }} --password-stdin
 
           docker compose pull
-          
           docker compose down
-          
           docker compose up -d
