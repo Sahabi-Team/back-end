@@ -3,7 +3,7 @@ name: CD
 on:
   push:
     branches:
-      - hotfix
+      - develop
   pull_request:
     branches:
       - develop
