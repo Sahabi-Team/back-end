@@ -8,8 +8,9 @@ from .models import Mentorship
 from .serializers import MentorshipSerializer, MentorshipCreateSerializer
 from trainer_auth.models import Trainer
 from django.shortcuts import get_object_or_404
-
+from workout.serializers import WorkoutPlanSerializer
 # Create your views here.
+from workout.models import WorkoutPlan
 
 class IsTraineeOrTrainer(permissions.BasePermission):
     """
@@ -114,4 +115,20 @@ class MentorshipViewSet(viewsets.ModelViewSet):
         queryset = self.get_queryset().filter(is_active=True)
         expired_mentorships = [m for m in queryset if m.is_expired()]
         serializer = self.get_serializer(expired_mentorships, many=True)
+        return Response(serializer.data)
+    @action(detail=True, methods=['get'], url_path='last_workout_plan')
+    def last_workout_plan(self, request, pk=None):
+        """
+        Retrieve the most recent workout plan associated with this mentorship.
+        """
+        mentorship = self.get_object()
+
+        last_plan = mentorship.workout_plans.order_by('-created_at').first()
+        if not last_plan:
+            return Response(
+                {"detail": "No workout plans found for this mentorship."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = WorkoutPlanSerializer(last_plan)
         return Response(serializer.data)
