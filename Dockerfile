@@ -46,7 +46,7 @@ RUN ls -la /app
 
 # RUN python manage.py add_user --count 20
 
-RUN python manage.py collectstatic
+# RUN python manage.py collectstatic
  
 # Expose the Django port
 EXPOSE 8000
