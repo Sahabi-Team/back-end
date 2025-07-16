@@ -144,3 +144,12 @@ class WorkoutExerciseViewSet(viewsets.ModelViewSet):
             raise serializers.ValidationError("Workout plan not found.")
         except Exercise.DoesNotExist:
             raise serializers.ValidationError("Exercise not found.")
+    
+    def destroy(self, request, *args, **kwargs):
+        workout_plan = self.get_object()
+
+        if workout_plan.mentorship.trainer.user != request.user:
+            raise PermissionDenied("You are not allowed to delete this workout plan.")
+
+        self.perform_destroy(workout_plan)
+        return Response(status=status.HTTP_204_NO_CONTENT)
