@@ -51,18 +51,6 @@ services:
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
 
-  alertmanager:
-    image: prom/alertmanager:main
-    container_name: alertmanager
-    restart: unless-stopped
-    ports:
-      - "9093:9093"
-    volumes:
-      - ./monitoring/alertmanager/config.yaml:/etc/alertmanager/config.yaml
-      - alertmanager_data:/alertmanager
-    command:
-      - "--config.file=/etc/alertmanager/config.yaml"
-      - "--storage.path=/alertmanager"
   
   node-exporter:
     image: prom/node-exporter:master
@@ -73,5 +61,4 @@ services:
 
 
 volumes:
-  alertmanager_data:
   postgres_data:
