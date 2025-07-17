@@ -56,3 +56,11 @@ jobs:
           docker compose down
           
           docker compose up -d
+
+          docker compose exec backend python manage.py makemigrations authentication trainer_auth tests client_auth exercise workout analytics permissions opinions mentorship notification chat
+
+          docker compose exec backend python manage.py migrate
+
+          docker compose exec backend rm -rf /app/static
+
+          docker compose exec backend python manage.py collectstatic
