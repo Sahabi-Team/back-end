@@ -64,3 +64,5 @@ jobs:
           docker compose exec backend rm -rf /app/static
 
           docker compose exec backend python manage.py collectstatic
+
+          yes y | docker image prune -a
