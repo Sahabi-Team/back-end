@@ -191,7 +191,7 @@ class FilteredTrainerListView(generics.ListAPIView):
             speciality_list = [s.strip() for s in specialities.split(',')]
             queryset = queryset.filter(specialties__in=speciality_list).distinct()
 
-        # Filter by experience
+        # Filter 
         experience = params.get('experience')
         if experience:
             experience_ranges = [e.strip() for e in experience.split(',')]
@@ -206,7 +206,10 @@ class FilteredTrainerListView(generics.ListAPIView):
 
         # Filter by rating
         # print(queryset[0].__dict__)
-        rating = params.get('rating')
+        if 'rating' in params:
+            rating = params.get('rating')
+        else:
+            rating = params.get('avg_rating')
         if rating:
             # print(rating,"777")
             try:
