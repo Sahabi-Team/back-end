@@ -211,7 +211,7 @@ class FilteredTrainerListView(generics.ListAPIView):
             # print(rating,"777")
             try:
                 rating_values = min([float(r.strip()) for r in rating.split(',')])
-                queryset = queryset.filter(ratingg__gte=rating_values)
+                queryset = queryset.filter(rating__gte=rating_values)
             except ValueError:
                 pass
 
