@@ -257,7 +257,7 @@ class CommentListView(generics.ListAPIView):
 
     def get_queryset(self):
         trainer_id = self.kwargs.get('trainer_id')
-        return Comment.objects.filter(trainer__id=trainer_id,approved=True)
+        return Comment.objects.filter(trainer__id=trainer_id, approved=True).order_by('-created_at')
 
 
 class CommentDetailView(generics.RetrieveUpdateDestroyAPIView):
