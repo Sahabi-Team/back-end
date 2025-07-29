@@ -14,7 +14,10 @@ class TraineeInfoSerializer(serializers.ModelSerializer):
         fields = ['user_id', 'name', 'profile_picture']
 
     def get_profile_picture(self, obj):
-        return f"{settings.PRODUCTION_DOMAIN}{obj.profile_picture.url}"
+        if obj.profile_picture:
+            return f"{settings.PRODUCTION_DOMAIN}{obj.profile_picture.url}"
+        else:
+            return None
 
 class NotificationSerializer(serializers.ModelSerializer):
     trainee_info = serializers.SerializerMethodField()
