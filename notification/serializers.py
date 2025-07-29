@@ -8,16 +8,20 @@ from django.conf import settings
 class TraineeInfoSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(source='id')
     profile_picture = serializers.SerializerMethodField()
+    trainee_username = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ['user_id', 'name', 'profile_picture']
+        fields = ['user_id', 'name', 'profile_picture', 'trainee_username']
 
     def get_profile_picture(self, obj):
         if obj.profile_picture:
             return f"{settings.PRODUCTION_DOMAIN}{obj.profile_picture.url}"
         else:
             return None
+    
+    def get_trainee_username(self, obj):
+        return obj.username
 
 class NotificationSerializer(serializers.ModelSerializer):
     trainee_info = serializers.SerializerMethodField()
