@@ -191,7 +191,7 @@ class FilteredTrainerListView(generics.ListAPIView):
             speciality_list = [s.strip() for s in specialities.split(',')]
             queryset = queryset.filter(specialties__in=speciality_list).distinct()
 
-        # Filter by experience
+        # Filter 
         experience = params.get('experience')
         if experience:
             experience_ranges = [e.strip() for e in experience.split(',')]
@@ -206,12 +206,15 @@ class FilteredTrainerListView(generics.ListAPIView):
 
         # Filter by rating
         # print(queryset[0].__dict__)
-        rating = params.get('rating')
+        if 'rating' in params:
+            rating = params.get('rating')
+        else:
+            rating = params.get('avg_rating')
         if rating:
             # print(rating,"777")
             try:
                 rating_values = min([float(r.strip()) for r in rating.split(',')])
-                queryset = queryset.filter(ratingg__gte=rating_values)
+                queryset = queryset.filter(avg_rating__gte=rating_values)
             except ValueError:
                 pass
 
@@ -254,7 +257,7 @@ class CommentListView(generics.ListAPIView):
 
     def get_queryset(self):
         trainer_id = self.kwargs.get('trainer_id')
-        return Comment.objects.filter(trainer__id=trainer_id,approved=True)
+        return Comment.objects.filter(trainer__id=trainer_id, approved=True).order_by('-created_at')
 
 
 class CommentDetailView(generics.RetrieveUpdateDestroyAPIView):

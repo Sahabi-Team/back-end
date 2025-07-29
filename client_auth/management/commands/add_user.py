@@ -145,7 +145,10 @@ class Command(BaseCommand):
                     trainee=trainees[(i + apprentice) % count],
                     trainer=trainers[i]
                 )
-                rating=random.randint(1,5) * 1.0 + random.randint(0,9) * 0.1
+                if i < count / 2:
+                    rating=random.randint(2,5) * 1.0 + random.randint(5,9) * 0.1
+                else:
+                    rating=random.randint(1,4) * 1.0 + random.randint(0,5) * 0.1
                 comment = "او عالی است حتما نصب کنید!" if rating > 2.5 else "او مرا به قتل رساند، خانواده من در حال طی کردن روند دادگستری برای شکایت از او هستند!"
                 Comment.objects.create(
                     trainee=trainees[(i + apprentice) % count],

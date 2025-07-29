@@ -1,0 +1,85 @@
+groups:
+  - name: node
+    rules:
+      - alert: NodeDown
+        expr: up{job="node_exporter"} == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Node Exporter is down"
+          description: "Node Exporter is not reachable for more than 5 minutes."
+
+      - alert: HighCPUUsage
+        expr: rate(node_cpu_seconds_total{mode="idle"}[5m]) < 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage exceeds 90% for more than 5 minutes."
+
+      - alert: HighMemoryUsage
+        expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes < 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage exceeds 90% for more than 5 minutes."
+
+      - alert: DiskSpaceLow
+        expr: node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"} < 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low disk space detected"
+          description: "Disk space usage exceeds 90% for more than 5 minutes."
+          
+  - name: cadvisor
+    rules:
+      - alert: ContainerHighCPUUsage
+        expr: sum by(name, container_name) (rate(container_cpu_usage_seconds_total{image!=""}[5m])) > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High container CPU usage detected"
+          description: "Container {{ $labels.container_name }} on {{ $labels.name }} is using more than 80% CPU for 5 minutes."
+      
+      - alert: ContainerHighMemoryUsage
+        expr: sum by(name, container_name) (container_memory_usage_bytes{image!=""}) / sum by(name, container_name) (container_spec_memory_limit_bytes{image!=""}) > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High container memory usage detected"
+          description: "Container {{ $labels.container_name }} on {{ $labels.name }} is using more than 80% of its memory limit for 5 minutes."
+      
+      - alert: ContainerKilled
+        expr: time() - container_last_seen{image!=""} > 60
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Container killed or crashed"
+          description: "Container {{ $labels.container_name }} on {{ $labels.name }} disappeared at {{ $value | humanizeTimestamp }}."
+      
+      - alert: ContainerHighThrottleRate
+        expr: rate(container_cpu_cfs_throttled_seconds_total{image!=""}[5m]) > 0.2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Container CPU throttling detected"
+          description: "Container {{ $labels.container_name }} on {{ $labels.name }} is being throttled by the kernel."
+      
+      - alert: ContainerNetworkHighErrorRate
+        expr: sum by (name, container_name) (rate(container_network_transmit_errors_total{image!=""}[5m]) + rate(container_network_receive_errors_total{image!=""}[5m])) > 0.01
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Container network errors detected"
+          description: "Container {{ $labels.container_name }} on {{ $labels.name }} is experiencing network errors."
