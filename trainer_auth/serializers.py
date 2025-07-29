@@ -6,7 +6,10 @@ from sahabi.settings import PRODUCTION_DOMAIN
 import jdatetime
 from datetime import timedelta
 from django.utils import timezone
-
+from datetime import timedelta
+import jdatetime
+import pytz
+from django.utils import timezone
 class TrainerSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(required=False)
     last_name = serializers.CharField(required=False)
@@ -191,15 +194,16 @@ class CommentSerializer(serializers.ModelSerializer):
     created_at_humanized = serializers.SerializerMethodField()
     created_at_jalali = serializers.SerializerMethodField()
 
-
     class Meta:
         model = Comment
         fields = ['id', 'trainee_name', 'trainee_email', 'trainer', 'comment', 'rating', 'created_at', 'created_at_humanized','created_at_jalali']     
         read_only_fields = ['trainee_name', 'trainee_email', 'created_at', 'created_at_humanized','created_at_jalali']
 
     def get_created_at_humanized(self, obj):
-        now = timezone.now()
-        delta = now - obj.created_at
+        tehran_tz = pytz.timezone('Asia/Tehran')
+        now = timezone.now().astimezone(tehran_tz)
+        created_at = obj.created_at.astimezone(tehran_tz)
+        delta = now - created_at
 
         if delta < timedelta(minutes=1):
             return "لحظاتی پیش"
@@ -213,8 +217,11 @@ class CommentSerializer(serializers.ModelSerializer):
             days = delta.days
             return f"{days} روز پیش"
         else:
-            jd = jdatetime.datetime.fromgregorian(datetime=obj.created_at)
+            jd = jdatetime.datetime.fromgregorian(datetime=created_at)
             return jd.strftime('%Y/%m/%d')
-    def get_created_at_jalali(self,obj):
-        jd = jdatetime.datetime.fromgregorian(datetime=obj.created_at)
+
+    def get_created_at_jalali(self, obj):
+        tehran_tz = pytz.timezone('Asia/Tehran')
+        created_at = obj.created_at.astimezone(tehran_tz)
+        jd = jdatetime.datetime.fromgregorian(datetime=created_at)
         return jd.strftime('%Y/%m/%d')
