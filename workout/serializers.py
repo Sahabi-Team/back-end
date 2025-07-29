@@ -48,6 +48,9 @@ class WorkoutPlanSerializer(serializers.ModelSerializer):
     trainer_name = serializers.SerializerMethodField(
         help_text="Username of the trainer who created the workout plan"
     )
+    trainer_namee = serializers.SerializerMethodField(
+        help_text="Name of the trainer who created the workout plan"
+    )
 
     class Meta:
         model = WorkoutPlan
