@@ -51,7 +51,7 @@ class WorkoutPlanSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WorkoutPlan
-        fields = ['id', 'mentorship', 'status', 'name', 'description', 'created_at', 'updated_at', 'exercises', 'trainer_name']
+        fields = ['id', 'mentorship', 'status', 'name', 'description', 'created_at', 'updated_at', 'exercises', 'trainer_name', 'trainer_namee']
         read_only_fields = ['id', 'created_at', 'updated_at']
         extra_kwargs = {
             'mentorship': {'help_text': 'ID of the mentorship this workout plan belongs to'},
@@ -61,3 +61,6 @@ class WorkoutPlanSerializer(serializers.ModelSerializer):
 
     def get_trainer_name(self, obj):
         return obj.mentorship.trainer.user.username
+    
+    def get_trainer_namee(self, obj):
+        return obj.mentorship.trainer.user.name
