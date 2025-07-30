@@ -8,7 +8,7 @@ class UserAdmin(BaseUserAdmin):
 
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
-        ('Personal Info', {'fields': ('name', 'email', 'phone_number', 'profile_picture')}),
+        ('Personal Info', {'fields': ('name', 'first_name', 'last_name', 'email', 'phone_number', 'profile_picture')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         ('User Type', {'fields': ('usertype',)}),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
@@ -17,10 +17,10 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'email', 'phone_number', 'password1', 'password2', 'usertype'),
+            'fields': ('username', 'email', 'phone_number', 'password1', 'password2', 'usertype', 'first_name', 'last_name',),
         }),
     )
 
-    list_display = ('username', 'email', 'name', 'phone_number', 'usertype', 'is_staff')
-    search_fields = ('username', 'email', 'name', 'phone_number')
+    list_display = ('username', 'email', 'name', 'first_name', 'last_name', 'phone_number', 'usertype', 'is_staff')
+    search_fields = ('username', 'email', 'name', 'first_name', 'last_name', 'phone_number')
     ordering = ('username',)
