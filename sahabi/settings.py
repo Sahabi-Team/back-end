@@ -27,7 +27,7 @@ SECRET_KEY = '605foi!lm@ctdu%@fzo9hsf(-+5=tm$kv-6wi_68szks=4ho54'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['gym-bato.ir','ighader.pythonanywhere.com','localhost','127.0.0.1', '84.234.29.28', '45.144.50.12']
+ALLOWED_HOSTS = ['gym-bato.ir', 'api.gym-bato.ir','ighader.pythonanywhere.com','localhost','127.0.0.1', '84.234.29.28', '45.144.50.12']
 
 
 # Application definition
@@ -102,6 +102,11 @@ MIDDLEWARE = [
 CORS_ALLOW_ALL_ORIGINS = True
 ROOT_URLCONF = 'sahabi.urls'
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://gym-bato.ir',
+    'https://api.gym-bato.ir',
+]
+
 
 TEMPLATES = [
     {
@@ -155,7 +160,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Production domain configuration
-PRODUCTION_DOMAIN = 'http://45.144.50.12:8000'  # Replace with your actual production domain
+PRODUCTION_DOMAIN = 'https://api.gym-bato.ir'  # Replace with your actual production domain
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
