@@ -116,8 +116,8 @@ class UpdateTrainerSerializer(serializers.ModelSerializer):
 
         # Extract user-related fields from validated_data
         user_fields = ["email", "username", "phone_number", "profile_picture", "first_name", "last_name"]
-        if "first_name" in validated_data and "last_name" in validated_data:
-            setattr(user, "name", f"{validated_data["first_name"]} {validated_data["last_name"]}")
+        # if "first_name" in validated_data and "last_name" in validated_data:
+        #     setattr(user, "name", f"{validated_data["first_name"]} {validated_data["last_name"]}")
         for field in user_fields:
             if field in validated_data:
                 setattr(user, field, validated_data.pop(field))  # Update user fields
